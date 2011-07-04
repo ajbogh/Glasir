@@ -1,0 +1,121 @@
+@CHARSET "UTF-8";
+
+body,
+html {
+	margin:0;
+	padding:0;
+	font-family:Lucida Grande, Lucida Sans, Lucida Sans Unicode, Helvetica, Arial, san-serif;
+	font-size:.95em;
+	color:white;
+}
+img {
+	border:0;	
+}
+.error {
+	font-weight:bold;
+	color:#d00;	
+}
+.success {
+	font-weight:bold;
+	color:#050;	
+}
+
+.ui-layout-center {
+	overflow:auto;
+	padding:0px !important;
+}
+.ui-layout-center table {
+	width:100%;
+	border-spacing:0px;
+}
+.ui-layout-center table tr:hover {
+	background-color:rgb(64,64,64);
+}
+.ui-layout-center table tr.playing {
+	background-color:rgb(32,32,32);
+}
+.ui-layout-center table tr.playing:hover {
+	background-color:rgb(128,128,128);
+}
+.ui-layout-center table th {
+	/*background-color:rgb(125,205,126);*/
+	background-color:#3d803d;
+	padding:2px;
+}
+.ui-layout-center table td {
+	border-right:1px solid #050;
+	border-bottom:1px solid #050;
+	padding:2px;
+}
+.ui-layout-center table tr td:last-child {
+	border-right:none;
+}
+
+.ui-layout-west{
+	white-space:nowrap;
+}
+.ui-layout-west ul li {
+	cursor:pointer;
+}
+
+.ui-layout-north {
+	background-image: -moz-linear-gradient(
+		center bottom,
+	    rgb(172,255,176) 00%,
+	    rgb(0,0,0) 50%
+	) !important;
+    background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.00, rgb(172,255,176)),
+	    color-stop(0.50, rgb(0,0,0))
+	) !important;
+	overflow:hidden !important;
+}
+
+div.login {
+	font-weight:bold;
+	float:right;
+	margin-top:90px;
+	font-size:.85em;
+	color: #050;
+}
+div.login a{
+	text-decoration:none;
+	color: #050;	
+}
+div.login a:hover{
+	text-decoration:underline;
+	cursor:pointer;
+}
+#loginscreen, #registerscreen {
+	border: 2px solid rgb(122,160,120);
+	position: absolute;
+	background-color:#fff;
+	z-index:1000;
+	display:none;
+	padding:5px;
+	border-radius: 15px;
+	background-color: #333;
+}
+#registerscreen {
+	width: 400px;
+} 
+#loginscreen div.error, #registerscreen div.error,#registerscreen div.success{
+	display:none;	
+}
+
+table.playlist {
+	padding:0px;
+}
+td.playlist-buttons {
+	width:1px;
+	white-space:nowrap;
+	padding:0px;
+}
+td.playlist-buttons img{
+	width:25px;
+	height:25px;
+}
+
