@@ -1,0 +1,71 @@
+#player-new {
+	/*border:1px solid #ff0000;*/ /*just for testing*/
+	float:left;
+}
+
+#playtoggle {
+	display:inline-block;
+	width:30px;
+	height:30px;
+	background-image: url("../images/audio-playbutton-sm.png");
+	background-repeat:no-repeat;
+	vertical-align:middle;
+}
+
+#playtoggle.playing {
+	background-image: url("../images/audio-pausebutton-sm.png");
+}
+
+#gutter {
+	display:inline-block;
+	width: 250px;
+	height: 5px;
+	background-color: #111;
+	border:7px solid #333;
+	vertical-align: middle;
+	-moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    -khtml-border-radius: 10px;
+    border-radius: 10px;
+    margin-left:-4px;
+    
+}
+
+#loading {
+	display:block;
+	height:5px;
+	width:100px; /*javascript variable*/
+	background-color:#c3f930;
+	
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+    
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c3f930', endColorstr='#3d770b'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#c3f930), to(#3d770b)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #c3f930,  #3d770b); /* for firefox 3.6+ */ 
+}
+
+#buffering {
+	display:block;
+	height:5px;
+	width:200px;  /*javascript variable, must be bugger than #loading*/
+	background-color:#3d770b;
+	
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+    
+    background-image: url("../images/player-buffer-background.png");
+    background-repeat:repeat-x;
+}
+
+.ui-slider-handle {
+	
+}
+
+#timeleft {
+	
+}
