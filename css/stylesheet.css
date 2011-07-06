@@ -11,6 +11,9 @@ html {
 img {
 	border:0;	
 }
+div.clear {
+	clear:both;
+}
 .error {
 	font-weight:bold;
 	color:#d00;	

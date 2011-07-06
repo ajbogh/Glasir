@@ -16,6 +16,7 @@
 	<link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.8.6.custom.css" />
 	<link rel="stylesheet" type="text/css" href="css/jplayer.blue.monday.css" />
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css" />
+	<link rel="stylesheet" type="text/css" href="css/player.css" />
 	
 	<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
 	<script type="text/javascript" src="phpFileTree/php_file_tree_jquery.js"></script>
@@ -111,15 +112,15 @@
 			<!-- <audio id="audioPlayerHold" controls autobuffer="true" preload="auto"></audio> -->
 		</div>
 		<div id="player-new">
-			<p class="player">
-			  <span id="playtoggle"><img src="images/audio-playbutton.png" style="width:30px;height:30px;" /></span>
-			  <span id="gutter">
-			    <span id="loading" />
-			    <span id="handle" class="ui-slider-handle" />
-			  </span>
-			  <span id="timeleft" />
-			  hello
-			</p>
+			<span id="playtoggle" class="playing"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="gutter">
+				<span id="buffering">
+					<span id="loading"></span>
+				</span>
+				<span id="handle" class="ui-slider-handle" />
+			</span>
+			<span id="timeleft" />
+			<div class="clear"></div>
 		</div>
 	</div><!--  end ui-layout-south -->
 	<div id="filetree" class="ui-layout-west php-file-tree">
