@@ -1,0 +1,25 @@
+This file will contain developer notes, such as desireable features that can be developed 
+and project information.
+
+Project Location:
+	https://github.com/ajbogh/Glasir
+
+Issue Tracking:
+	https://github.com/ajbogh/Glasir/issues
+
+Mailing Lists:
+	Dev - 	http://groups.google.com/group/glasir-dev
+			glasir-dev@googlegroups.com
+	Users - http://groups.google.com/group/glasir-users
+			glasir-users@googlegroups.com
+			*Users group for the Glasir project. 
+			 General support, feedback, and ideas from other users. 
+			 Some devs may watch this group as well but do not use it for development communication.
+
+Project Coordinator:
+	Allan Bogh
+	ajbogh@allanbogh.com
+	
+	Email to join the project as a contributor. A better response will be had 
+	if you provide a code or design enhancement in your first email.
+
