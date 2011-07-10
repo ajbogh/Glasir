@@ -67,6 +67,9 @@ function playbuttonClick(elem){
 	//add playing class to this song
 	$(elem).parent().parent().addClass('playing');
 	//play this song
+	song = $(elem).parent().parent().children('td:eq(1)').html();
+	artist = $(elem).parent().parent().children('td:eq(2)').html();
+	$("#player-new #currentsong").html((song != ""?song:"")+(artist != ""?" - "+artist:""))
 	play($(elem).parent().parent().children('td:last-child').html());
 	
 	//set the last playing song in case the page is refreshed.
@@ -141,8 +144,13 @@ function getPlaylist(){
 	});
 }
 
-//TODO: Fix this
 function play(file){
+	//TODO: do something when a null file is passed.
+	if(file == null){
+		alert("null file, try the next one");
+		return;
+	}
+	
 	var audio = document.createElement('audio');
 	var alerted = 0;
 	var duration = 0;
@@ -152,14 +160,28 @@ function play(file){
 	audio.setAttribute("controls","true");
 	audio.autobuffer = true;
 	audio.preload = "auto";
-	audio.addEventListener( "canplay", function(){ 
+	if((audio.buffered != undefined) && (audio.buffered.length != 0)){
+		$("#buffering").removeClass("hidden");
+		$(audio).bind('progress', function(){
+			var loaded = parseInt(((audio.buffered.end(0) / duration) * 100), 10);
+			$("#buffering").width(loaded+"%");
+		});	
+	}else{
+		$("#buffering").addClass("hidden");
+	}
+	audio.addEventListener( "canplay", function(){
+			$("#playtoggle").addClass("playing"); 
+			
 			audio.play();
 			checkPlayInterval = setInterval(function(){
-				if(audio.currentTime >= previousCurrentTime + 1){
+				if(audio.currentTime >= previousCurrentTime + 1 //this was an old problem, the current time in Chrome would continue past the duration 
+					|| audio.currentTime == 9223372013568 //sometimes Chrome ends at this magic number. gah!
+					|| audio.currentTime > duration - 1){  //firefox doesn't always end at or near the duration. gah!
 					audio.pause();
 					clearInterval(checkPlayInterval);
 					
 					nextSong = getNextSong();
+					//alert(nextSong.file);
 					$nextSongElement = nextSong.element;
 					
 					playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
@@ -170,18 +192,23 @@ function play(file){
 	}, true);
 	audio.addEventListener( "timeupdate", function(){ 
 			previousCurrentTime = this.currentTime;
+			$loading = $("#loading"); 
+			$loading.width(($loading.parent().parent().width()*(previousCurrentTime/duration))+"px");
+			$("#positionbutton").css("margin-left",($loading.width()-5)+"px");
 			$("#player_hold").html(previousCurrentTime+" - "+this.currentTime+" - "+duration);
 		}, true);
 	
 	//Chrome still has issues with ogg.
-	if($.browser.mozilla && audio.canPlayType("audio/ogg")){
+	if(audio.canPlayType("audio/mp3")){
+		audio.src = "mediaservice.php?type=mp3&file="+escape(file);
+	}else if($.browser.mozilla && audio.canPlayType("audio/ogg")){
 		audio.src = "mediaservice.php?type=ogg&file="+escape(file);
 		$.ajax({
 			   type: "GET",
 			   url: audio.src,
 			   dataType: "script"
 			 });
-	}else{ //Chrome fix
+	}else{ //Can anything else just use mp3?
 		audio.src = "mediaservice.php?type=mp3&file="+escape(file);
 	}
 	
@@ -262,6 +289,27 @@ function getNextSong(){
 			};
 	}
 }
+
+function playtoggle(parent){
+	if($("#audioPlayer").audivid("isplaying")){
+		$("#playtoggle").removeClass("playing");	
+	}else{
+		$("#playtoggle").addClass("playing");
+	}
+	$("#audioPlayer").audivid("playpause");
+	
+}
+function next(){
+	nextSong = getNextSong();
+	$nextSongElement = nextSong.element;
+	playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
+}
+/*function pause(){
+	$("#audioPlayer").audivid("playpause");	
+}
+function unpause(){
+	alert("unpaused");
+}*/
 
 //uses the info from the login div to login
 function doLogin(){

@@ -24,13 +24,15 @@
 	<script type="text/javascript" src="js/jquery-ui-1.8.6.custom.min.js"></script>
 	<script type="text/javascript" src="js/jQuery.jPlayer.2.0.0/jquery.jplayer.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dragsort-0.4.min.js"></script>
+	<script type="text/javascript" src="js/jquery-audivid.js"></script>
 	<script type="text/javascript" src="js/controller.js"></script>
+	<script type="text/javascript" src="js/generalfunctions.js"></script>
 	<script type="text/javascript">
 		var playMode = 'random'; //default, random
 
 	
 		$(document).ready(function(){
-			if(!$.browser.mozilla && ! $.browser.webkit) $('body').html("<h1>This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
+			if(!$.browser.mozilla && ! $.browser.webkit) $('body').html("<h1 style=\"color:black;\">This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
 			else{
 				getFileList('<?php echo $appconf['mediaFolder']; ?>',$('#filetree'));
 	
@@ -53,6 +55,14 @@
 		    	$(".ui-layout-east").css("background-color",theColor);
 		    	$(".ui-layout-west").css("background-color",theColor);
 			}
+			
+			if($.browser.mozilla){ //note: Can we make Firefox process the song in the background?
+				$("#warning").html("Firefox may require a few seconds between songs. You may have a better experience with Chrome.");
+				$("#warning").show();
+				setTimeout(function() {
+        			$("#warning").hide('slide', {}, 500);
+    			}, 5000);
+			}
 		});
 	
 
@@ -67,17 +77,19 @@
 		?>
 	</div>
 	<div class="ui-layout-north">
+		<div id="warning"></div>
 		<img src="images/logo.png" style="height:100px" />
-		<img src="images/Glasir.png" />
+		<img src="images/ideas/cw8lDg_1.png" style="height:50px;" /><!--<img src="images/Glasir.png" />-->
 		<?php 
 			if(!isset($_SESSION['id'])){ //show login
 		?>
-		<div class="login">
-			<a href="javascript:void(0);" onclick="$('#loginscreen').css('left',$(this).offset().left-($('#loginscreen').width()-$(this).width()+15)).css('top',$(this).offset().top+$(this).height()).show();">
+		
+		<div id="loginregister" class="login">
+			<a href="javascript:void(0);" onclick="showLogin(this);">
 				Login
 			</a>
 			||
-			<a href="javascript:void(0);" onclick="$('#registerscreen').css('left',$(this).offset().left-($('#registerscreen').width()-$(this).width()+15)).css('top',$(this).offset().top+$(this).height()).show();">
+			<a href="javascript:void(0);" onclick="showRegister(this);">
 				Register
 			</a>
 		</div>
@@ -85,6 +97,22 @@
 			}else{ //user logged in
 				//display playlist
 		?>
+		<div id="player-new">
+			<span id="previousbutton"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="playtoggle" onclick="playtoggle(this);"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="nextbutton" onclick="next();"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="gutter">
+				<div id="positionbutton"><img src="images/audio-positionbutton.png" /></div>
+				<span id="buffering">
+					<span id="loading"></span>
+				</span>
+				<span id="handle" class="ui-slider-handle" />
+			</span>
+			<span id="timeleft" />
+			<div class="clear"></div>
+			<div id="currentsong"></div>
+		</div>
+		<div class="clear"></div>
 		<div id="account" class="login">
 			Welcome <?php echo $_SESSION['username']; ?>! || <a href="javascript:void(0);" onclick="doLogout()">Log Out</a>
 		</div>
@@ -111,23 +139,13 @@
 		<div id="player_hold">
 			<!-- <audio id="audioPlayerHold" controls autobuffer="true" preload="auto"></audio> -->
 		</div>
-		<div id="player-new">
-			<span id="playtoggle" class="playing"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
-			<span id="gutter">
-				<span id="buffering">
-					<span id="loading"></span>
-				</span>
-				<span id="handle" class="ui-slider-handle" />
-			</span>
-			<span id="timeleft" />
-			<div class="clear"></div>
-		</div>
 	</div><!--  end ui-layout-south -->
 	<div id="filetree" class="ui-layout-west php-file-tree">
 	</div>
 	<div id="actionMover"></div>
 	<div id="actionMover2"></div>
 	<div id="loginscreen">
+		<img src="images/removebutton.png" style="width:20px;float:right;" alt="Close" title="Close" onclick="$('#loginscreen').hide();" />
 		<div class="error"></div>
 		<form id="loginform" action="" method="post" onsubmit="return doLogin()">
 			<table>
@@ -139,6 +157,7 @@
 		</form>
 	</div>
 	<div id="registerscreen">
+		<img src="images/removebutton.png" style="width:20px;float:right;" alt="Close" title="Close" onclick="$('#registerscreen').hide();" />
 		<div class="error"></div>
 		<div class="success"></div>
 		<div>If you've registered before with the same email address, your username will be changed.</div>

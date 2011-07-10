@@ -18,8 +18,7 @@ if(!in_array($ext,$allowedExtensions)){
 	exit;
 }
 
-if(file_exists($track))
-{
+if(file_exists($track)){
 	if(!$duration){
 		//load the information into the database
 		$query = "SELECT ID 
@@ -57,15 +56,19 @@ if(file_exists($track))
 	    	//convert to ogg
 	    	//copy to a temp directory (777 or php owner) in the web directory 
 	    	//php safe mode only allows exec within a safe dir
-	    	if(!file_exists(getcwd().'/temp/'.basename($track).'.ogg')){
-		    	copy($track,getcwd().'/temp/'.basename($track));
+	    	if(!file_exists('/tmp/'.basename($track).'.ogg')){
+		    	//$command = 'cp -f "'.$track.+'" "'.getcwd().'/temp/'.basename($track).'"';
+				//$out = shell_exec($command);
+		    	copy($track,'/tmp/'.basename($track));
 		    	//set up the command to convert the file
-		    	$command = 'mpg321 "'.getcwd().'/temp/'.basename($track).'" -w "'.getcwd().'/temp/'.basename($track).'.raw" && oggenc "'.getcwd().'/temp/'.basename($track).'.raw" -o "'.getcwd().'/temp/'.basename($track).'.ogg" && rm -f "'.getcwd().'/temp/'.basename($track).'.raw"';
+		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w "'.'/tmp/'.basename($track).'.raw" && oggenc "'.'/tmp/'.basename($track).'.raw" -o "'.'/tmp/'.basename($track).'.ogg" && rm -f "'.'/tmp/'.basename($track).'.raw"';
 		    	$out = shell_exec($command);
 		    	//clean up copied mp3
-		    	unlink(getcwd().'/temp/'.basename($track));
+		    	//$command = 'rm -f "'.getcwd().'/temp/'.basename($track).'"';
+				//$out = shell_exec($command);
+		    	unlink('/tmp/'.basename($track));
 	    	}
-	    	$track = getcwd().'/temp/'.basename($track).'.ogg';
+	    	$track = '/tmp/'.basename($track).'.ogg';
 	    }
 	    header('Content-length: ' . filesize($track));
 	readfile($track);

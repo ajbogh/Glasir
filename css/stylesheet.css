@@ -42,12 +42,12 @@ div.clear {
 }
 .ui-layout-center table th {
 	/*background-color:rgb(125,205,126);*/
-	background-color:#3d803d;
+	background-color:rgb(70,138,15);
 	padding:2px;
 }
 .ui-layout-center table td {
-	border-right:1px solid #050;
-	border-bottom:1px solid #050;
+	border-right:1px solid rgb(70,138,15);
+	border-bottom:1px solid rgb(70,138,15);
 	padding:2px;
 }
 .ui-layout-center table tr td:last-child {
@@ -64,14 +64,14 @@ div.clear {
 .ui-layout-north {
 	background-image: -moz-linear-gradient(
 		center bottom,
-	    rgb(172,255,176) 00%,
+	    rgb(70,138,15) 00%, /*rgb(172,255,176) 00%,*/
 	    rgb(0,0,0) 50%
 	) !important;
     background-image: -webkit-gradient(
 	    linear,
 	    left bottom,
 	    left top,
-	    color-stop(0.00, rgb(172,255,176)),
+	    color-stop(0.00, rgb(70,138,15)),
 	    color-stop(0.50, rgb(0,0,0))
 	) !important;
 	overflow:hidden !important;
@@ -80,20 +80,23 @@ div.clear {
 div.login {
 	font-weight:bold;
 	float:right;
-	margin-top:90px;
+	margin-top:-12px;
 	font-size:.85em;
-	color: #050;
+	color: rgb(195,249,48);
 }
 div.login a{
 	text-decoration:none;
-	color: #050;	
+	color: rgb(195,249,48);	/* light green */
 }
 div.login a:hover{
 	text-decoration:underline;
 	cursor:pointer;
 }
+#loginregister {
+	margin-top:91px;
+}
 #loginscreen, #registerscreen {
-	border: 2px solid rgb(122,160,120);
+	border: 2px solid rgb(195,249,48);
 	position: absolute;
 	background-color:#fff;
 	z-index:1000;
@@ -120,5 +123,24 @@ td.playlist-buttons {
 td.playlist-buttons img{
 	width:25px;
 	height:25px;
+}
+
+#warning{
+	display:none;
+	position:absolute;
+	left:125px;
+	padding:2px;
+	background-image: -moz-linear-gradient(
+		center bottom,
+	    rgb(200,70,15) 00%, /*rgb(172,255,176) 00%,*/
+	    rgb(0,0,0) 50%
+	) !important;
+    background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.00, rgb(200,70,15)),
+	    color-stop(0.50, rgb(0,0,0))
+	) !important;
 }
 

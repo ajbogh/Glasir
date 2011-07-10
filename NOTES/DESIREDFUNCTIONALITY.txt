@@ -1,0 +1,27 @@
+--Background file indexing (ID3 tags)--
+	Files should be scanned and loaded to the database in the background. 
+	Before a daemon is created, a lazy loading system can be made to load the playlist rapidly 
+	with limited information but continue processing the file in the background for additional ID3 information.
+
+--Cover Art--
+	If the folder has cover art, then try to use that.
+	Check the album name, artist, and song against a website like Amazon to find the cover art.
+
+--Visualizations--
+	Firefox includes a method to obtain visualization information from the audio tags. Include the functionality
+	only for Firefox users. Add more visualizations as other browsers adopt the functionality.
+
+--Beats per Minute--
+	Process the audio in the database to determine the BPM for each song. This requires background processing.
+	Load the BPM into the database to allow custom playlists, like "Fast Songs", "Slow Songs", etc.
+
+--Custom playlists/Searches--
+	- Songs listened to most
+	- Songs listened to least
+	- Artist
+	- Album
+	- Year
+	- Song name
+
+--Song Preview--
+	If the player is paused and the user hovers over a song in the playlist then play a short sample (10 seconds?)

@@ -1,3 +1,6 @@
+Requirements: 
+	Install mpg321
+
 Step 1: 
 	Copy 'config.inc.php.default' to 'config.inc.php' and configure the appropriate variables. Choose a database name that works for you, such as 'Glasir'.
 
@@ -10,3 +13,5 @@ Step 3:
 		It is based on the db_original.sql file and will include version numbers for all changes. 
 		Find the next highest version number to your system and run everything below the line to update your database. 
 
+Step 4: 
+	Create a temp directory, chmod to 777.
