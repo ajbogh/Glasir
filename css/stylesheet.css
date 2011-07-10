@@ -61,6 +61,7 @@ div.clear {
 	cursor:pointer;
 }
 
+
 .ui-layout-north {
 	background-image: -moz-linear-gradient(
 		center bottom,
@@ -110,6 +111,9 @@ div.login a:hover{
 } 
 #loginscreen div.error, #registerscreen div.error,#registerscreen div.success{
 	display:none;	
+}
+#player, #player_hold {
+	display:none;
 }
 
 table.playlist {

@@ -37,14 +37,14 @@
 				getFileList('<?php echo $appconf['mediaFolder']; ?>',$('#filetree'));
 	
 				$('body').layout({ 
-						applyDefaultStyles: true,
-						west__size:300,
-						north__size:125,
-						north__resizable:false,
-						north__slidable:false,
-						north__closable:false,
-						north__spacing_open:1,
-						south__size:100
+						applyDefaultStyles: true
+						,west__size:300
+						,north__size:125
+						,north__resizable:false
+						,north__slidable:false
+						,north__closable:false
+						,north__spacing_open:1
+						//,south__size:100
 					});
 				theColor = "#000";
 	
@@ -52,6 +52,7 @@
 		    	$(".ui-layout-center").css("background-color",theColor);
 		    	$(".ui-layout-north").css("background-color",theColor);
 		    	$(".ui-layout-south").css("background-color",theColor);
+		    	$(".ui-layout-south").css("display","none");
 		    	$(".ui-layout-east").css("background-color",theColor);
 		    	$(".ui-layout-west").css("background-color",theColor);
 			}
@@ -129,7 +130,7 @@
 		?>
 		
 	</div>
-	<div class="ui-layout-south">
+	<!--<div class="ui-layout-south">-->
 		<div id="player">
 			<!-- <audio id="audioPlayer" controls autobuffer="true" preload="auto" autoplay="autoplay">
 	    		<source src="mediaservice.php?type=ogg&file=/media/music/Aqueduct - I Sold Gold/Aqueduct - I Sold Gold - 01 - The Suggestion Box.mp3" type="audio/ogg" />
@@ -139,7 +140,7 @@
 		<div id="player_hold">
 			<!-- <audio id="audioPlayerHold" controls autobuffer="true" preload="auto"></audio> -->
 		</div>
-	</div><!--  end ui-layout-south -->
+	<!--</div>--><!--  end ui-layout-south -->
 	<div id="filetree" class="ui-layout-west php-file-tree">
 	</div>
 	<div id="actionMover"></div>
