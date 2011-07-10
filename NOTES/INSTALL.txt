@@ -12,6 +12,3 @@ Step 3:
 	* For updates you may check out db_updates.sql (if it's available). This will record all changes that the database has gone through in order. 
 		It is based on the db_original.sql file and will include version numbers for all changes. 
 		Find the next highest version number to your system and run everything below the line to update your database. 
-
-Step 4: 
-	Create a temp directory, chmod to 777.
