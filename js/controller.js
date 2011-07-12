@@ -171,13 +171,14 @@ function play(file){
 	}
 	audio.addEventListener( "canplay", function(){
 			$("#playtoggle").addClass("playing"); 
+			$("#pausetoggle").addClass("playing");
 			
-			audio.play();
+			$(audio).audivid("play");
 			checkPlayInterval = setInterval(function(){
 				if(audio.currentTime >= previousCurrentTime + 1 //this was an old problem, the current time in Chrome would continue past the duration 
 					|| audio.currentTime == 9223372013568 //sometimes Chrome ends at this magic number. gah!
 					|| audio.currentTime > duration - 1){  //firefox doesn't always end at or near the duration. gah!
-					audio.pause();
+					$(audio).audivid("pause");
 					clearInterval(checkPlayInterval);
 					
 					nextSong = getNextSong();
@@ -291,25 +292,25 @@ function getNextSong(){
 }
 
 function playtoggle(parent){
-	if($("#audioPlayer").audivid("isplaying")){
-		$("#playtoggle").removeClass("playing");	
+	if($("#audioPlayer").audivid("isplaying") == 1){
+		$("#playtoggle").removeClass("playing");
+		$("#pausetoggle").removeClass("playing");
 	}else{
 		$("#playtoggle").addClass("playing");
+		$("#pausetoggle").addClass("playing");
 	}
 	$("#audioPlayer").audivid("playpause");
 	
 }
-function next(){
+// Note: Do not name this next()!
+function playnext(){
+	$("#audioPlayer").audivid("pause");
+	
 	nextSong = getNextSong();
 	$nextSongElement = nextSong.element;
+	
 	playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
 }
-/*function pause(){
-	$("#audioPlayer").audivid("playpause");	
-}
-function unpause(){
-	alert("unpaused");
-}*/
 
 //uses the info from the login div to login
 function doLogin(){

@@ -100,8 +100,9 @@
 		?>
 		<div id="player-new">
 			<span id="previousbutton"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
-			<span id="playtoggle" onclick="playtoggle(this);"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
-			<span id="nextbutton" onclick="next();"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="playtoggle"><img src="images/audio-playbutton.png" onclick="playtoggle(this);" /></span>
+			<span id="pausetoggle"><img src="images/audio-pausebutton.png" onclick="playtoggle(this);" /></span>
+			<span id="nextbutton"><img src="images/audio-nextbutton.png" onclick="playnext();" /></span>
 			<span id="gutter">
 				<div id="positionbutton"><img src="images/audio-positionbutton.png" /></div>
 				<span id="buffering">
@@ -131,12 +132,7 @@
 		
 	</div>
 	<!--<div class="ui-layout-south">-->
-		<div id="player">
-			<!-- <audio id="audioPlayer" controls autobuffer="true" preload="auto" autoplay="autoplay">
-	    		<source src="mediaservice.php?type=ogg&file=/media/music/Aqueduct - I Sold Gold/Aqueduct - I Sold Gold - 01 - The Suggestion Box.mp3" type="audio/ogg" />
-	    		<source src="mediaservice.php?type=mp3&file=/media/music/Aqueduct - I Sold Gold/Aqueduct - I Sold Gold - 01 - The Suggestion Box.mp3" />
-			</audio>  -->
-		</div>
+		<div id="player"></div>
 		<div id="player_hold">
 			<!-- <audio id="audioPlayerHold" controls autobuffer="true" preload="auto"></audio> -->
 		</div>

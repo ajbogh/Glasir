@@ -7,12 +7,19 @@
 	display:inline-block;
 	width:47px;
 	height:47px;
-	background-image: url("../images/audio-playbutton.png");
-	background-repeat:no-repeat;
+	vertical-align:middle;
+}
+#pausetoggle {
+	display:none;
+	width:47px;
+	height:47px;
 	vertical-align:middle;
 }
 #playtoggle.playing {
-	background-image: url("../images/audio-pausebutton.png");
+	display:none;
+}
+#pausetoggle.playing {
+	display:inline-block;
 }
 #previousbutton {
 	display:inline-block;

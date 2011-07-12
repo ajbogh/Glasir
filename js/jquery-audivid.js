@@ -12,13 +12,14 @@ jQuery.fn.audivid = function(var1,var2,var3)
 		} else if (var1 == "isplaying")
 		{
 			t1 = $(this).attr('currentTime');
-			var date = new Date();
-			do 
-			{
-				curDate = new Date();
-			} while (curDate == date);
+			//sleep for a millesecond
+			var startTime = new Date().getTime();
+			while (new Date().getTime() < startTime + 1);//curDate == date);
 			t2 = $(this).attr('currentTime');
-			return (t1 != t2)
+			if(t1 == t2){ //must be firefox
+				return $(this).attr("isPlaying");
+			}
+			return (t1 != t2);
 		} else if (var1 == "duration")
 		{
 			return $(this).attr('duration');
@@ -31,13 +32,12 @@ jQuery.fn.audivid = function(var1,var2,var3)
 	{
 		if (var1 == "playpause")
 		{
-			if ($(this).audivid("isplaying")) // Playing
-			{
+			if ($(this).audivid("isplaying") == 1){ // Playing
 				this.pause();
-			}
-			else
-			{
+				$(this).attr("isPlaying",0);
+			}else{
 				this.play();
+				$(this).attr("isPlaying",1);
 			}
 		}
 		
@@ -48,15 +48,18 @@ jQuery.fn.audivid = function(var1,var2,var3)
 		else if (var1 == "stop")
 		{
 			this.pause();
+			$(this).attr("isPlaying",0);
 			this.currentTime = 0;
 		}
 		else if (var1 == "pause")
 		{
 			this.pause();
+			$(this).attr("isPlaying",1);
 		}
 		else if (var1 == "play")
 		{
 			this.play();
+			$(this).attr("isPlaying",1);
 		}
 		else if (var1 == "time")
 		{
