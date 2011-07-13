@@ -25,10 +25,10 @@
 	<script type="text/javascript" src="js/jQuery.jPlayer.2.0.0/jquery.jplayer.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dragsort-0.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-audivid.js"></script>
-	<script type="text/javascript" src="js/controller.js"></script>
 	<script type="text/javascript" src="js/generalfunctions.js"></script>
+	<script type="text/javascript" src="js/controller.js"></script>
 	<script type="text/javascript">
-		var playMode = 'random'; //default, random
+		//var playMode = 'random'; //default, random
 
 	
 		$(document).ready(function(){
@@ -44,7 +44,7 @@
 						,north__slidable:false
 						,north__closable:false
 						,north__spacing_open:1
-						//,south__size:100
+						,south__size:35
 					});
 				theColor = "#000";
 	
@@ -52,7 +52,7 @@
 		    	$(".ui-layout-center").css("background-color",theColor);
 		    	$(".ui-layout-north").css("background-color",theColor);
 		    	$(".ui-layout-south").css("background-color",theColor);
-		    	$(".ui-layout-south").css("display","none");
+		    	//$(".ui-layout-south").css("display","none");
 		    	$(".ui-layout-east").css("background-color",theColor);
 		    	$(".ui-layout-west").css("background-color",theColor);
 			}
@@ -124,6 +124,12 @@
 				getPlaylist();
 
 				setInterval('sessionsaver()',300000);
+				
+				if(getCookie("playMode") != null){
+					$("#playmode").addClass(getCookie("playMode"));
+				}else{
+					$("#playmode").addClass("default");
+				}
 			});
 		</script>
 		<?php
@@ -168,6 +174,9 @@
 			<input type="submit" name="submit" value="Register" />
 			<input type="button" name="cancel" value="Cancel" onclick="$('#registerscreen').hide();$('#registerscreen div.error').hide();$('#registerscreen div.success').hide();" />
 		</form>
+	</div>
+	<div id="status" class="ui-layout-south" style="border:1px solid red;">
+		<div id="playmode" class="playmode" onclick="cyclePlayMode();"></div>
 	</div>
 </body>
 </html> 
