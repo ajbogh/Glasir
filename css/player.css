@@ -25,15 +25,19 @@
 	display:inline-block;
 	width:30px;
 	height:30px;
-	background-image: url("../images/audio-previousbutton.png");
 	background-repeat:no-repeat;
 	vertical-align:middle;
+}
+#previousbutton img {
+	display:block;
+}
+#previousbutton img.random {
+	display:none;
 }
 #nextbutton {
 	display:inline-block;
 	width:30px;
 	height:30px;
-	background-image: url("../images/audio-nextbutton.png");
 	background-repeat:no-repeat;
 	vertical-align:middle;
 }

@@ -64,6 +64,7 @@
         			$("#warning").hide('slide', {}, 500);
     			}, 5000);
 			}
+			
 		});
 	
 
@@ -99,7 +100,7 @@
 				//display playlist
 		?>
 		<div id="player-new">
-			<span id="previousbutton"><!--<img src="images/audio-playbutton.png" style="width:30px;height:30px;" />--></span>
+			<span id="previousbutton"><img src="images/audio-previousbutton.png" onclick="playprevious();" /></span>
 			<span id="playtoggle"><img src="images/audio-playbutton.png" onclick="playtoggle(this);" /></span>
 			<span id="pausetoggle"><img src="images/audio-pausebutton.png" onclick="playtoggle(this);" /></span>
 			<span id="nextbutton"><img src="images/audio-nextbutton.png" onclick="playnext();" /></span>
@@ -122,6 +123,10 @@
 			//load playlist onready
 			$(document).ready(function(){
 				getPlaylist();
+				
+				if(getCookie("playMode") == 'random'){
+					if(!$("#previousbutton img").hasClass("random")) $("#previousbutton img").addClass("random");
+				}
 
 				setInterval('sessionsaver()',300000);
 				

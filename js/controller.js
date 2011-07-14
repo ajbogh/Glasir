@@ -296,6 +296,33 @@ function getNextSong(){
 	}
 }
 
+/**
+ * Gets the sibling above the currently playing one.
+ */
+function getPreviousSong(){
+	//get current playing song.
+	playingElement = $(".ui-layout-center .playing");
+	if(playingElement.length > 0){
+		if(playingElement.parent().children().index(playingElement) > 1){
+			previous = $(".ui-layout-center .playing").prev();
+			return {file:previous.children('td:last-child').html(),
+					element:previous
+				};
+		}else{
+			//return the first one.
+			previous = $(".ui-layout-center .playing").siblings().first().next(); //first is a header
+			return {file:previous.children('td:last-child').html(),
+				element:previous
+			};
+		}
+	}else{ //return the first one.
+		previous = $(".ui-layout-center table tr:eq(1)") //first row is a header
+		return {file:previous.children('td:last-child').html(),
+			element:previous
+		};
+	}
+}
+
 function playtoggle(parent){
 	if($("#audioPlayer").audivid("isplaying") == 1){
 		$("#playtoggle").removeClass("playing");
@@ -315,6 +342,20 @@ function playnext(){
 	$nextSongElement = nextSong.element;
 	
 	playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
+}
+/**
+ * Gets the previous song to play. 
+ * Will not work in random mode!
+ */
+function playprevious(){
+	if(getCookie("playMode") == null || getCookie("playMode") == 'default'){
+		$("#audioPlayer").audivid("pause");
+		
+		previousSong = getPreviousSong();
+		$previousSongElement = previousSong.element;
+		
+		playbuttonClick($($previousSongElement).children(".playlist-buttons").children("a:first-child"));
+	}
 }
 
 //uses the info from the login div to login
@@ -428,8 +469,11 @@ function cyclePlayMode(){
 	if($("#playmode").hasClass("random")){
 		setCookie("playMode","default",365);
 		$("#playmode").removeClass("random").addClass("default");
+		$("#previousbutton img").removeClass("random");
+		
 	}else{
 		setCookie("playMode","random",365);
 		$("#playmode").removeClass("default").addClass("random");
+		$("#previousbutton img").addClass("random");
 	}
 }
