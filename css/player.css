@@ -44,7 +44,7 @@
 
 #gutter {
 	display:inline-block;
-	width: 465px;
+	width: 350px; /*465px;*/
 	height: 8px;
 	background-color: #111;
 	border:10px solid #333;

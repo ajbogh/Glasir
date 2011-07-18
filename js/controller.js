@@ -100,7 +100,7 @@ function getPlaylist(){
 				for(i in data['result']){
 					html = "<tr>";
 					html += "<td class=\"playlist-buttons\">" +
-								"<a href=\"javascript:void(0);\" onclick=\"playbuttonClick(this);\">" +
+								"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);\">" + //playbuttonClick(this);
 									"<img src=\"images/playbutton.png\" title=\"Play\" alt=\"Play\" />" +
 								"</a>" +
 								"<a href=\"javascript:void(0);\" onclick=\"remove($(this).parent().parent().children('td:last-child').html());$(this).parent().parent().remove();\">" +
@@ -324,12 +324,14 @@ function getPreviousSong(){
 }
 
 function playtoggle(parent){
-	if($("#audioPlayer").audivid("isplaying") == 1){
+	if($("#audioPlayer").audivid("isplaying") == 1){ //pause
 		$("#playtoggle").removeClass("playing");
 		$("#pausetoggle").removeClass("playing");
-	}else{
+		$(".playing td a:first-child img").attr('src','images/playbutton.png');
+	}else{  //play
 		$("#playtoggle").addClass("playing");
 		$("#pausetoggle").addClass("playing");
+		$(".playing td a:first-child img").attr('src','images/playbutton_playing.png');
 	}
 	$("#audioPlayer").audivid("playpause");
 	
