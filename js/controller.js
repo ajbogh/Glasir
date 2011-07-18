@@ -58,6 +58,8 @@ function DropLi(node){
  * elem is the anchor of the play button
  */
 function playbuttonClick(elem){
+	if($(elem).parent().parent().hasClass("playing")) return; //do nothing for current playing element
+	
 	//remove the play button from other playing songs
 	$(".playing td a:first-child img").attr('src','images/playbutton.png');
 	//add play button to this song
@@ -100,7 +102,7 @@ function getPlaylist(){
 				for(i in data['result']){
 					html = "<tr>";
 					html += "<td class=\"playlist-buttons\">" +
-								"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);\">" + //playbuttonClick(this);
+								"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);playbuttonClick(this);\">" + //playbuttonClick(this);
 									"<img src=\"images/playbutton.png\" title=\"Play\" alt=\"Play\" />" +
 								"</a>" +
 								"<a href=\"javascript:void(0);\" onclick=\"remove($(this).parent().parent().children('td:last-child').html());$(this).parent().parent().remove();\">" +
