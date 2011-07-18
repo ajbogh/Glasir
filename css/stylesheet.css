@@ -153,13 +153,13 @@ td.playlist-buttons img{
 	height:25px;
 	float:left;
 	margin-top:-7px;
-	border:1px solid red;
+	/*border:1px solid red;*/
 }
 .playmode.default {
-	background-image: url("../images/playmode_default.png");
-	border:1px solid green;
+	background-image: url("../images/audio-continuousbutton.png");
+	/*border:1px solid green;*/
 }
 .playmode.random {
-	background-image: url("../images/playmode_random.png");
-	border:1px solid blue;
+	background-image: url("../images/audio-shufflebutton.png");
+	/*border:1px solid blue;*/
 }

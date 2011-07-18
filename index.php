@@ -181,7 +181,7 @@
 		</form>
 	</div>
 	<div id="status" class="ui-layout-south" style="border:1px solid red;">
-		<div id="playmode" class="playmode" onclick="cyclePlayMode();"></div>
+		<div id="playmode" class="playmode" onclick="cyclePlayMode();" title="Play mode: continuous/shuffle"></div>
 	</div>
 </body>
 </html> 
