@@ -26,7 +26,7 @@
 	<script type="text/javascript" src="js/jquery.dragsort-0.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-audivid.js"></script>
 	<script type="text/javascript" src="js/generalfunctions.js"></script>
-	<script type="text/javascript" src="js/controller.js"></script>
+	<script type="text/javascript" src="js/musiccontroller.js"></script>
 	<script type="text/javascript">
 		//var playMode = 'random'; //default, random
 
@@ -134,6 +134,24 @@
 					$("#playmode").addClass(getCookie("playMode"));
 				}else{
 					$("#playmode").addClass("default");
+				}
+				
+				//play the previously playing song or the first song in the list
+				if(getCookie("playing") != null && getCookie("playing") != "null"){
+					//set the last playing song in case the page is refreshed.
+					var lastSong = getCookie("playing");
+					elem = $(".playlist tr td:last-child").filter(function(index){
+						return $(this).html() === lastSong;
+					});
+					if(elem.size() > 0){ //play the last song from the cookie
+						playbuttonClick($(".playlist tr td:last-child").filter(function(index){
+							return $(this).html() === lastSong;
+						}).siblings(":first").children("a:first-child"));
+					}else{ //play the first song in the list
+						playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+					}	
+				}else{
+					playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
 				}
 			});
 		</script>

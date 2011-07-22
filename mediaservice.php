@@ -21,15 +21,16 @@ if(!in_array($ext,$allowedExtensions)){
 if(file_exists($track)){
 	if(!$duration){
 		//load the information into the database
-		$query = "SELECT ID 
+		$query = "SELECT ID, Title, LastUpdated 
 				  FROM Songs
 				  WHERE Filename='".mysql_real_escape_string($track)."'";
 		$result = mysql_query($query,$dbconn);
 		if(mysql_num_rows($result) == 0){
 			$query = "INSERT INTO Songs
-					  (Filename, Filesize) 
+					  (Filename, Filesize, LastUpdated) 
 					  VALUES ('".mysql_real_escape_string($track)."',
-					  		  '".filesize($track)."')";
+					  		  '".filesize($track)."',
+					  		  NOW())";
 			$result = mysql_query($query,$dbconn);
 		}
 		
@@ -57,15 +58,11 @@ if(file_exists($track)){
 	    	//copy to a temp directory (777 or php owner) in the web directory 
 	    	//php safe mode only allows exec within a safe dir
 	    	if(!file_exists('/tmp/'.basename($track).'.ogg')){
-		    	//$command = 'cp -f "'.$track.+'" "'.getcwd().'/temp/'.basename($track).'"';
-				//$out = shell_exec($command);
 		    	copy($track,'/tmp/'.basename($track));
 		    	//set up the command to convert the file
 		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w "'.'/tmp/'.basename($track).'.raw" && oggenc "'.'/tmp/'.basename($track).'.raw" -o "'.'/tmp/'.basename($track).'.ogg" && rm -f "'.'/tmp/'.basename($track).'.raw"';
 		    	$out = shell_exec($command);
 		    	//clean up copied mp3
-		    	//$command = 'rm -f "'.getcwd().'/temp/'.basename($track).'"';
-				//$out = shell_exec($command);
 		    	unlink('/tmp/'.basename($track));
 	    	}
 	    	$track = '/tmp/'.basename($track).'.ogg';
@@ -76,40 +73,66 @@ if(file_exists($track)){
 		
 		exit;
 	}else{  //get the duration
-		require_once('includes/getid3/getid3.php');
+		//query the dataabase to determine if it has the duration 
+		//return value from database unless it's 0
 
-		$thisMP3info = GetAllMP3info($track);
-		//getid3_lib::CopyTagsToComments($thisMP3info);
-		$info = array('artist'=>'','track'=>'','title'=>'','comment'=>'','genre'=>'','year'=>'','album'=>'');
-		if(isset($thisMP3info['id3'])){
-			$info['artist'] = $thisMP3info['id3']['id3v1']['artist']; // artist from any/all available tag formats
-			if(isset($thisMP3info['id3']['id3v1']['track'])) $info['track'] = $thisMP3info['id3']['id3v1']['track']; // artist from any/all available tag formats
-			$info['title'] = $thisMP3info['id3']['id3v1']['title']; // title from ID3v2
-			$info['comment'] = $thisMP3info['id3']['id3v1']['comment'];
-			$info['genre'] = $thisMP3info['id3']['id3v1']['genre'];
-			$info['year'] = $thisMP3info['id3']['id3v1']['year'];
-			$info['album'] = $thisMP3info['id3']['id3v1']['album'];
-		}else{
-			$info['title'] = basename($track);
-		}
-		if($info['title'] == '') $info['title'] = basename($track); //fix title if it can't be set by broken ID3 info
-		$info['bitrate'] = $thisMP3info['bitrate']; // audio bitrate
-		$info['duration'] = $thisMP3info['playtime_seconds']; // playtime in seconds
-		
-		$query = "UPDATE Songs
-				  SET Title='".mysql_real_escape_string($info['title'])."',
-				      Artist='".mysql_real_escape_string($info['artist'])."',
-				      Bitrate='".mysql_real_escape_string($info['bitrate'])."',
-				      Duration='".mysql_real_escape_string($info['duration'])."',
-				      Track='".mysql_real_escape_string($info['track'])."',
-				      Comment='".mysql_real_escape_string($info['comment'])."',
-				      Genre='".mysql_real_escape_string($info['genre'])."',
-				      Year='".mysql_real_escape_string($info['year'])."',
-				      Album='".mysql_real_escape_string($info['album'])."'
+		$query = "SELECT ID, Title, Track, Artist, Comment, Genre, Year, Album, Bitrate, Duration, LastUpdated 
+				  FROM Songs
 				  WHERE Filename='".mysql_real_escape_string($track)."'";
 		$result = mysql_query($query,$dbconn);
+		if(mysql_num_rows($result) != 0){
+			$row = mysql_fetch_assoc($result);
+			if(!is_null($row['Duration']) && $row['Duration'] > 0 && !is_null($row['Bitrate']) && $row['Bitrate'] > 0){
+				$info = array('artist'=>'','track'=>'','title'=>'','comment'=>'','genre'=>'','year'=>'','album'=>'','bitrate'=>'','duration'=>'');
+				$info['artist'] = $row['Artist'];
+				$info['track'] = $row['Track'];
+				$info['title'] = $row['Title'];
+				$info['comment'] = $row['Comment'];
+				$info['genre'] = $row['Genre'];
+				$info['year'] = $row['Year'];
+				$info['album'] = $row['Album'];
+				$info['bitrate'] = $row['Bitrate'];
+				$info['duration'] = $row['Duration'];
+
+				echo json_encode($info);
+			}else{ //get the duration and put it in the database
+				require_once('includes/getid3/getid3.php');
+
+				$thisMP3info = GetAllMP3info($track);
+				//getid3_lib::CopyTagsToComments($thisMP3info);
+				$info = array('artist'=>'','track'=>'','title'=>'','comment'=>'','genre'=>'','year'=>'','album'=>'');
+				if(isset($thisMP3info['id3'])){
+					if(isset($thisMP3info['id3']['id3v1']['artist'])) $info['artist'] = $thisMP3info['id3']['id3v1']['artist']; // artist from any/all available tag formats
+					if(isset($thisMP3info['id3']['id3v1']['track'])) $info['track'] = $thisMP3info['id3']['id3v1']['track']; // artist from any/all available tag formats
+					if(isset($thisMP3info['id3']['id3v1']['title'])) $info['title'] = $thisMP3info['id3']['id3v1']['title']; // title from ID3v2
+					if(isset($thisMP3info['id3']['id3v1']['comment'])) $info['comment'] = $thisMP3info['id3']['id3v1']['comment'];
+					if(isset($thisMP3info['id3']['id3v1']['genre'])) $info['genre'] = $thisMP3info['id3']['id3v1']['genre'];
+					if(isset($thisMP3info['id3']['id3v1']['year'])) $info['year'] = $thisMP3info['id3']['id3v1']['year'];
+					if(isset($thisMP3info['id3']['id3v1']['album'])) $info['album'] = $thisMP3info['id3']['id3v1']['album'];
+				}else{
+					$info['title'] = basename($track);
+				}
+				if($info['title'] == '') $info['title'] = basename($track); //fix title if it can't be set by broken ID3 info
+				if(isset($thisMP3info['bitrate'])) $info['bitrate'] = $thisMP3info['bitrate']; // audio bitrate
+				if(isset($thisMP3info['playtime_seconds'])) $info['duration'] = $thisMP3info['playtime_seconds']; // playtime in seconds
 		
-		echo json_encode($info);
+				$query = "UPDATE Songs
+						  SET Title='".mysql_real_escape_string($info['title'])."',
+						      Artist='".mysql_real_escape_string($info['artist'])."',
+						      Bitrate='".mysql_real_escape_string($info['bitrate'])."',
+						      Duration='".mysql_real_escape_string($info['duration'])."',
+						      Track='".mysql_real_escape_string($info['track'])."',
+						      Comment='".mysql_real_escape_string($info['comment'])."',
+						      Genre='".mysql_real_escape_string($info['genre'])."',
+						      Year='".mysql_real_escape_string($info['year'])."',
+						      Album='".mysql_real_escape_string($info['album'])."',
+						      LastUpdated=NOW()
+						  WHERE Filename='".mysql_real_escape_string($track)."'";
+				$result = mysql_query($query,$dbconn);
+		
+				echo json_encode($info);
+			}
+		}
 	}
 }else{
     echo "No file: ".$track;

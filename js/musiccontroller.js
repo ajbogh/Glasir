@@ -1,4 +1,3 @@
-
 /**
  * Gets a file tree from the server.
  * Appends each folder and file as a UL/LI element
@@ -22,30 +21,6 @@ function getFileList(directory,ul){
 				}
 		});
 	}
-}
-
-/*
- * elem is the anchor of the play button
- */
-function playbuttonClick(elem){
-	if($(elem).parent().parent().hasClass("playing")) return; //do nothing for current playing element
-	
-	//remove the play button from other playing songs
-	$(".playing td a:first-child img").attr('src','images/playbutton.png');
-	//add play button to this song
-	$(elem).children(':first-child').attr('src','images/playbutton_playing.png');
-	//remove playing class from other songs
-	$(elem).parent().parent().siblings().removeClass('playing');
-	//add playing class to this song
-	$(elem).parent().parent().addClass('playing');
-	//play this song
-	song = $(elem).parent().parent().children('td:eq(1)').html();
-	artist = $(elem).parent().parent().children('td:eq(2)').html();
-	$("#player-new #currentsong").html((song != ""?song:"")+(artist != ""?" - "+artist:""))
-	play($(elem).parent().parent().children('td:last-child').html());
-	
-	//set the last playing song in case the page is refreshed.
-	setCookie("playing",$(elem).parent().parent().children('td:last-child').html(),365);
 }
 
 /** 
@@ -75,7 +50,7 @@ function getPlaylist(){
 								"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);playbuttonClick(this);\">" + //playbuttonClick(this);
 									"<img src=\"images/playbutton.png\" title=\"Play\" alt=\"Play\" />" +
 								"</a>" +
-								"<a href=\"javascript:void(0);\" onclick=\"remove($(this).parent().parent().children('td:last-child').html());$(this).parent().parent().remove();\">" +
+								"<a href=\"javascript:void(0);\" onclick=\"remove($(this).parent().parent().children('td:last-child').html(),this);\">" +
 									"<img src=\"images/removebutton.png\" title=\"Remove\" alt=\"Remove\" />" +
 								"</a>"
 							"</td>";
@@ -93,23 +68,7 @@ function getPlaylist(){
 				}
 				$(".ui-layout-center").append($playlist);
 				
-				//play the first song in the list. The song file is in the last column (hidden)
-				if(getCookie("playing") != null && getCookie("playing") != "null"){
-					//set the last playing song in case the page is refreshed.
-					var lastSong = getCookie("playing");
-					elem = $(".playlist tr td:last-child").filter(function(index){
-						return $(this).html() === lastSong;
-					});
-					if(elem.size() > 0){
-						playbuttonClick($(".playlist tr td:last-child").filter(function(index){
-							return $(this).html() === lastSong;
-						}).siblings(":first").children("a:first-child"));
-					}else{
-						playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
-					}	
-				}else{
-					playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
-				}
+				
 			}else{
 				$(".ui-layout-center").empty().append(data['error']);
 			}
@@ -120,13 +79,60 @@ function getPlaylist(){
 	});
 }
 
-function play(file){
-	//TODO: do something when a null file is passed.
-	if(file == null){
-		alert("null file, try the next one");
-		return;
+//pauses or plays current song
+function playtoggle(parent){
+	if($("#audioPlayer").audivid("isplaying") == 1){ //pause
+		$("#playtoggle").removeClass("playing");
+		$("#pausetoggle").removeClass("playing");
+		$(".playing td a:first-child img").attr('src','images/playbutton.png');
+	}else{  //play
+		$("#playtoggle").addClass("playing");
+		$("#pausetoggle").addClass("playing");
+		$(".playing td a:first-child img").attr('src','images/playbutton_playing.png');
 	}
+	$("#audioPlayer").audivid("playpause");
 	
+}
+//changes from random to default play mode
+function cyclePlayMode(){
+	if($("#playmode").hasClass("random")){
+		setCookie("playMode","default",365);
+		$("#playmode").removeClass("random").addClass("default");
+		$("#previousbutton img").removeClass("random");
+		
+	}else{
+		setCookie("playMode","random",365);
+		$("#playmode").removeClass("default").addClass("random");
+		$("#previousbutton img").addClass("random");
+	}
+}
+
+
+/*
+ * elem is the anchor of the play button
+ */
+function playbuttonClick(elem){
+	if($(elem).size() < 1) return; //in case elem is null
+	if($(elem).parent().parent().hasClass("playing")) return; //do nothing for current playing element
+	
+	//remove the play button from other playing songs
+	$(".playing td a:first-child img").attr('src','images/playbutton.png');
+	//add play button to this song
+	$(elem).children(':first-child').attr('src','images/playbutton_playing.png');
+	//remove playing class from other songs
+	$(elem).parent().parent().siblings().removeClass('playing');
+	//add playing class to this song
+	$(elem).parent().parent().addClass('playing');
+	//play this song
+	song = $(elem).parent().parent().children('td:eq(1)').html();
+	artist = $(elem).parent().parent().children('td:eq(2)').html();
+	$("#player-new #currentsong").html((song != ""?song:"")+(artist != ""?" - "+artist:""))
+	play($(elem).parent().parent().children('td:last-child').html()); //play the filename
+	
+	//set the last playing song in case the page is refreshed.
+	setCookie("playing",$(elem).parent().parent().children('td:last-child').html(),365);
+}
+function play(filename){
 	var audio = document.createElement('audio');
 	var alerted = 0;
 	var duration = 0;
@@ -177,7 +183,7 @@ function play(file){
 	
 	//Chrome still has issues with ogg.
 	if(audio.canPlayType("audio/mp3")){
-		audio.src = "mediaservice.php?type=mp3&file="+escape(file);
+		audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
 	}else if($.browser.mozilla && audio.canPlayType("audio/ogg")){
 		audio.src = "mediaservice.php?type=ogg&file="+escape(file);
 		$.ajax({
@@ -186,7 +192,7 @@ function play(file){
 			   dataType: "script"
 			 });
 	}else{ //Can anything else just use mp3?
-		audio.src = "mediaservice.php?type=mp3&file="+escape(file);
+		audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
 	}
 	
 	$("#player").html(audio);
@@ -194,7 +200,7 @@ function play(file){
 	$.ajax({
 	   type: "GET",
 	   url: audio.src.split("?")[0],
-	   data: "duration=true&file="+escape(file),
+	   data: "duration=true&file="+escape(filename),
 	   success: function(msg){
 		   info = $.parseJSON(msg);
 		   
@@ -204,11 +210,52 @@ function play(file){
 	   error:function(xhr,ajaxOptions,thrownError){
 			alert(thrownError);
 	   }
-	 });
+	 });	
+}
+
+//adds a file to the end of the playlist.
+function queue(file){
+	$.ajax({
+		type:"POST",
+		url:"playlist.php",
+		data:{action:'queue',
+			filename:file},
+		dataType:"json",
+		success:function(data){
+			if(data['return']==0){
+				//add result to end of list
+				html = "<tr>";
+				html += "<td class=\"playlist-buttons\">" +
+							"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);playbuttonClick(this);\">" + //playbuttonClick(this);
+								"<img src=\"images/playbutton.png\" title=\"Play\" alt=\"Play\" />" +
+							"</a>" +
+							"<a href=\"javascript:void(0);\" onclick=\"remove($(this).parent().parent().children('td:last-child').html(),this);\">" +
+								"<img src=\"images/removebutton.png\" title=\"Remove\" alt=\"Remove\" />" +
+							"</a>"
+						"</td>";
+				html += "<td>"+data['result'][0]['Title']+"</td>";
+				html += "<td>"+data['result'][0]['Artist']+"</td>";
+				html += "<td>"+data['result'][0]['Album']+"</td>";
+				html += "<td>"+data['result'][0]['Genre']+"</td>";
+				html += "<td>"+data['result'][0]['Year']+"</td>";
+				html += "<td>"+(Math.ceil(parseInt(data['result'][0]['Bitrate'])/1000))+"kbps</td>";
+				secs = ((parseInt(data['result'][0]['Duration'])%60) < 10? "0"+(parseInt(data['result'][0]['Duration'])%60):(parseInt(data['result'][0]['Duration'])%60));
+				html += "<td>"+(Math.floor(parseInt(data['result'][0]['Duration'])/60))+":"+secs+"</td>";
+				html += "<td style=\"display:none;\">"+data['result'][0]['Filename']+"</td>";
+				html += "</tr>";
+				
+				$(".ui-layout-center .playlist").append(html);
+			}
+			//getPlaylist();
+		},
+		error:function(xhr,ajaxOptions,thrownError){
+			alert(xhr.status+" - "+thrownError);
+		}
+	});
 }
 
 //remove a file from the playlist
-function remove(file){
+function remove(file, elem){
 	$.ajax({
 	   type: "POST",
 	   url: "playlist.php",
@@ -224,25 +271,11 @@ function remove(file){
 			alert(thrownError);
 	   }
 	 });
+	 
+	 //delete the row from the table as well.
+	$(elem).parent().parent().remove();
 }
 
-//adds a file to the end of the playlist.
-function queue(file){
-	$.ajax({
-		type:"POST",
-		url:"playlist.php",
-		data:{action:'queue',
-			filename:file},
-		dataType:"json",
-		success:function(data){
-			//add result to end of list
-			getPlaylist();
-		},
-		error:function(xhr,ajaxOptions,thrownError){
-			alert(xhr.status+" - "+thrownError);
-		}
-	});
-}
 
 //figures out which song is playing based on its background color
 //then increments to the next one if the playmode is default
@@ -299,19 +332,6 @@ function getPreviousSong(){
 	}
 }
 
-function playtoggle(parent){
-	if($("#audioPlayer").audivid("isplaying") == 1){ //pause
-		$("#playtoggle").removeClass("playing");
-		$("#pausetoggle").removeClass("playing");
-		$(".playing td a:first-child img").attr('src','images/playbutton.png');
-	}else{  //play
-		$("#playtoggle").addClass("playing");
-		$("#pausetoggle").addClass("playing");
-		$(".playing td a:first-child img").attr('src','images/playbutton_playing.png');
-	}
-	$("#audioPlayer").audivid("playpause");
-	
-}
 // Note: Do not name this next()!
 function playnext(){
 	$("#audioPlayer").audivid("pause");
@@ -333,19 +353,5 @@ function playprevious(){
 		$previousSongElement = previousSong.element;
 		
 		playbuttonClick($($previousSongElement).children(".playlist-buttons").children("a:first-child"));
-	}
-}
-
-
-function cyclePlayMode(){
-	if($("#playmode").hasClass("random")){
-		setCookie("playMode","default",365);
-		$("#playmode").removeClass("random").addClass("default");
-		$("#previousbutton img").removeClass("random");
-		
-	}else{
-		setCookie("playMode","random",365);
-		$("#playmode").removeClass("default").addClass("random");
-		$("#previousbutton img").addClass("random");
 	}
 }
