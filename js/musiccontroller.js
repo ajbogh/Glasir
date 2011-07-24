@@ -224,7 +224,7 @@ function play(filename){
 	if(audio.canPlayType("audio/mp3")){
 		audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
 	}else if($.browser.mozilla && audio.canPlayType("audio/ogg")){
-		audio.src = "mediaservice.php?type=ogg&file="+escape(file);
+		audio.src = "mediaservice.php?type=ogg&file="+escape(filename);
 		$.ajax({
 			   type: "GET",
 			   url: audio.src,
