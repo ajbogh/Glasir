@@ -77,7 +77,7 @@ function getLyrics3Filepointer(&$mp3info, $fd, $offset, $version, $length) {
 }
 
 function Lyrics3Timestamp2Seconds($rawtimestamp) {
-	if (ereg("(\[[0-9]{2}:[0-9]{2}\])", $rawtimestamp)) {
+	if (preg_match("(\[[0-9]{2}:[0-9]{2}\])", $rawtimestamp,$matches) > 0) {
 		return ((int) substr($rawtimestamp, 1, 2) * 60) + (int) substr($rawtimestamp, 4, 2);
 	} else {
 		return NULL;
@@ -89,7 +89,7 @@ function Lyrics3LyricsTimestampParse(&$mp3info) {
 	foreach ($lyricsarray as $key => $lyricline) {
 		$regs = array();
 		unset($thislinetimestamps);
-		while (ereg("(\[[0-9]{2}:[0-9]{2}\])", $lyricline, $regs)) {
+		while (preg_match_all("(\[[0-9]{2}:[0-9]{2}\])", $lyricline, $regs)) {
 			$thislinetimestamps[] = Lyrics3Timestamp2Seconds($regs[0]);
 			$lyricline = str_replace($regs[0], '', $lyricline);
 		}
