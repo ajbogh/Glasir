@@ -1,5 +1,5 @@
 Requirements: 
-	Install mpg321
+	Install mpg321 and oggenc
 
 Step 1: 
 	Copy 'config.inc.php.default' to 'config.inc.php' and configure the appropriate variables. Choose a database name that works for you, such as 'Glasir'.
