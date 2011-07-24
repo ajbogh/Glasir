@@ -60,7 +60,8 @@ if(file_exists($track)){
 	    	if(!file_exists('/tmp/'.basename($track).'.ogg')){
 		    	copy($track,'/tmp/'.basename($track));
 		    	//set up the command to convert the file
-		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w "'.'/tmp/'.basename($track).'.raw" && oggenc "'.'/tmp/'.basename($track).'.raw" -o "'.'/tmp/'.basename($track).'.ogg" && rm -f "'.'/tmp/'.basename($track).'.raw"';
+		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w - | oggenc - -o "'.'/tmp/'.basename($track).'.ogg"';
+		    	//$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w "'.'/tmp/'.basename($track).'.raw" && oggenc "'.'/tmp/'.basename($track).'.raw" -b 128 -o "'.'/tmp/'.basename($track).'.ogg" && rm -f "'.'/tmp/'.basename($track).'.raw"';
 		    	$out = shell_exec($command);
 		    	//clean up copied mp3
 		    	unlink('/tmp/'.basename($track));

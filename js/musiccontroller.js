@@ -241,6 +241,7 @@ function play(filename){
 	   url: audio.src.split("?")[0],
 	   data: "duration=true&file="+escape(filename),
 	   success: function(msg){
+		   //alert(msg);
 		   info = $.parseJSON(msg);
 		   
 		   duration = info['duration'];
