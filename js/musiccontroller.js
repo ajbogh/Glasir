@@ -23,6 +23,35 @@ function getFileList(directory,ul){
 	}
 }
 
+//function that is called right after the playlist is loaded
+function loadStartup(){
+	if(getCookie("autoplay") != null && getCookie("autoplay") != ""){
+		$("#autoplay").addClass("on");
+		//play the song
+		//play the previously playing song or the first song in the list
+		if(getCookie("playing") != null && getCookie("playing") != "null"){
+			//set the last playing song in case the page is refreshed.
+			var lastSong = getCookie("playing");
+			//alert(lastSong); //debug
+			elem = $(".playlist tr td:last-child").filter(function(index){
+				//alert($(this).html());
+				return $(this).html() === lastSong;
+			});
+			//alert(elem.length);
+			if(elem.size() > 0){ //play the last song from the cookie
+				playbuttonClick($(".playlist tr td:last-child").filter(function(index){
+					return $(this).html() === lastSong;
+				}).siblings(":first").children("a:first-child"));
+			}else{ //play the first song in the list
+				playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+			}	
+		}else{
+			alert("playfirst");
+			playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+		}
+	}
+}
+
 /** 
  * Gets the playlist for a user. 
  * The user must be logged in and the session created.
@@ -68,7 +97,7 @@ function getPlaylist(){
 				}
 				$(".ui-layout-center").append($playlist);
 				
-				
+				loadStartup();
 			}else{
 				$(".ui-layout-center").empty().append(data['error']);
 			}
@@ -104,6 +133,16 @@ function cyclePlayMode(){
 		setCookie("playMode","random",365);
 		$("#playmode").removeClass("default").addClass("random");
 		$("#previousbutton img").addClass("random");
+	}
+}
+//turns autoplay on or off when you refresh the page
+function cycleAutoplay(){
+	if($("#autoplay").hasClass("on")){
+		$("#autoplay").removeClass("on");
+		setCookie("autoplay","",365);
+	}else{
+		$("#autoplay").addClass("on");
+		setCookie("autoplay","on",365);
 	}
 }
 

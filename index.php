@@ -44,7 +44,7 @@
 						,north__slidable:false
 						,north__closable:false
 						,north__spacing_open:1
-						,south__size:35
+						,south__size:40
 					});
 				theColor = "#000";
 	
@@ -136,23 +136,12 @@
 					$("#playmode").addClass("default");
 				}
 				
-				//play the previously playing song or the first song in the list
-				if(getCookie("playing") != null && getCookie("playing") != "null"){
-					//set the last playing song in case the page is refreshed.
-					var lastSong = getCookie("playing");
-					elem = $(".playlist tr td:last-child").filter(function(index){
-						return $(this).html() === lastSong;
-					});
-					if(elem.size() > 0){ //play the last song from the cookie
-						playbuttonClick($(".playlist tr td:last-child").filter(function(index){
-							return $(this).html() === lastSong;
-						}).siblings(":first").children("a:first-child"));
-					}else{ //play the first song in the list
-						playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
-					}	
-				}else{
-					playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
-				}
+				
+				
+				
+				
+				
+				
 			});
 		</script>
 		<?php
@@ -200,6 +189,7 @@
 	</div>
 	<div id="status" class="ui-layout-south" style="border:1px solid red;">
 		<div id="playmode" class="playmode" onclick="cyclePlayMode();" title="Play mode: continuous/shuffle"></div>
+		<div id="autoplay" class="playmode" onclick="cycleAutoplay();" title="Automatic Play"></div>
 	</div>
 </body>
 </html> 
