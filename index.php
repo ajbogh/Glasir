@@ -32,7 +32,7 @@
 
 	
 		$(document).ready(function(){
-			if(!$.browser.mozilla && ! $.browser.webkit) $('body').html("<h1 style=\"color:black;\">This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
+			if(!$.browser.mozilla && ! $.browser.webkit && !$.browser.opera) $('body').html("<h1 style=\"color:black;\">This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
 			else{
 				getFileList('<?php echo $appconf['mediaFolder']; ?>',$('#filetree'));
 	
