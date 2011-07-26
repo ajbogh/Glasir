@@ -46,7 +46,6 @@ function loadStartup(){
 				playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
 			}	
 		}else{
-			alert("playfirst");
 			playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
 		}
 	}
@@ -172,6 +171,7 @@ function playbuttonClick(elem){
 	setCookie("playing",$(elem).parent().parent().children('td:last-child').html(),365);
 }
 function play(filename){
+	$("#audioPlayer").remove(); //remove the current audio player
 	var audio = document.createElement('audio');
 	var alerted = 0;
 	var duration = 0;
@@ -296,6 +296,12 @@ function queue(file){
 
 //remove a file from the playlist
 function remove(file, elem){
+	if(file == $(elem).parent().parent().children('td:last-child').html()){
+		next = getNextSong();
+		
+		playbuttonClick($(next.element).children("td.playlist-buttons").children("a:first-child"));
+	}
+	
 	$.ajax({
 	   type: "POST",
 	   url: "playlist.php",
