@@ -32,8 +32,8 @@
 
 	
 		$(document).ready(function(){
-			if(!$.browser.mozilla && ! $.browser.webkit && !$.browser.opera) $('body').html("<h1 style=\"color:black;\">This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
-			else{
+			//if(!$.browser.mozilla && ! $.browser.webkit && !$.browser.opera) $('body').html("<h1 style=\"color:black;\">This website only supports Firefox or Chrome. Chrome will be your faster choice.</h1>");
+			//else{
 				getFileList('<?php echo $appconf['mediaFolder']; ?>',$('#filetree'));
 	
 				$('body').layout({ 
@@ -55,7 +55,7 @@
 		    	//$(".ui-layout-south").css("display","none");
 		    	$(".ui-layout-east").css("background-color",theColor);
 		    	$(".ui-layout-west").css("background-color",theColor);
-			}
+			//}
 			
 			if($.browser.mozilla){ //note: Can we make Firefox process the song in the background?
 				$("#warning").html("Firefox may require a few seconds between songs. You may have a better experience with Chrome.");
