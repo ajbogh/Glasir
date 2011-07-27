@@ -207,6 +207,8 @@ function play(filename){
 					$nextSongElement = nextSong.element;
 
 					playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
+					//scroll to next song
+					$($nextSongElement).scrollintoview({duration: 1000});
 				}else{ //debug check
 					//$("#player_hold").html(previousCurrentTime+" - "+audio.currentTime+" - "+duration);
 				}
