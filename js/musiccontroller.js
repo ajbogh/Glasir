@@ -205,7 +205,7 @@ function play(filename){
 					nextSong = getNextSong();
 					//alert(nextSong.file);
 					$nextSongElement = nextSong.element;
-					
+
 					playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
 				}else{ //debug check
 					//$("#player_hold").html(previousCurrentTime+" - "+audio.currentTime+" - "+duration);
@@ -285,6 +285,8 @@ function queue(file){
 				html += "</tr>";
 				
 				$(".ui-layout-center .playlist").append(html);
+				//scroll to the bottom of the playlist
+				$(".ui-layout-center").animate({ scrollTop: $(".ui-layout-center").attr("scrollHeight") }, 1000);
 			}
 			//getPlaylist();
 		},
@@ -296,11 +298,8 @@ function queue(file){
 
 //remove a file from the playlist
 function remove(file, elem){
-	if(file == $(elem).parent().parent().children('td:last-child').html()){
-		next = getNextSong();
-		
-		playbuttonClick($(next.element).children("td.playlist-buttons").children("a:first-child"));
-	}
+	var $playing = $(".ui-layout-center .playing");
+	var next = getNextSong();
 	
 	$.ajax({
 	   type: "POST",
@@ -311,7 +310,12 @@ function remove(file, elem){
 	   },
 	   dataType:"json",
 	   success: function(msg){
-		   //stop it from playing if it is?
+		   //stop it from playing if it is
+		   if(file == $playing.children('td:last-child').html()){
+				playbuttonClick($(next.element).children("td.playlist-buttons").children("a:first-child"));
+				//scroll to the next item
+				$(next.element).scrollintoview({duration: 1000});
+			}
 	   },
 	   error:function(xhr,ajaxOptions,thrownError){
 			alert(thrownError);

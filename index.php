@@ -25,6 +25,7 @@
 	<script type="text/javascript" src="js/jQuery.jPlayer.2.0.0/jquery.jplayer.min.js"></script>
 	<script type="text/javascript" src="js/jquery.dragsort-0.4.min.js"></script>
 	<script type="text/javascript" src="js/jquery-audivid.js"></script>
+	<script type="text/javascript" src="js/jquery.scrollintoview.min.js"></script>
 	<script type="text/javascript" src="js/generalfunctions.js"></script>
 	<script type="text/javascript" src="js/musiccontroller.js"></script>
 	<script type="text/javascript">
