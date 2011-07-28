@@ -137,12 +137,6 @@
 					$("#playmode").addClass("default");
 				}
 				
-				
-				
-				
-				
-				
-				
 			});
 		</script>
 		<?php

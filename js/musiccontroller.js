@@ -178,6 +178,7 @@ function playbuttonClick(elem){
 }
 function play(filename){
 	$("#audioPlayer").remove(); //remove the current audio player
+	
 	var audio = document.createElement('audio');
 	var alerted = 0;
 	var duration = 0;
@@ -199,7 +200,7 @@ function play(filename){
 	audio.addEventListener( "canplay", function(){
 			$("#playtoggle").addClass("playing"); 
 			$("#pausetoggle").addClass("playing");
-			
+			//$("#audioPlayer").play();
 			$(audio).audivid("play");
 			checkPlayInterval = setInterval(function(){
 				if(audio.currentTime >= previousCurrentTime + 1 //this was an old problem, the current time in Chrome would continue past the duration 
