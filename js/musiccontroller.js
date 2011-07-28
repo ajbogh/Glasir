@@ -306,7 +306,7 @@ function queue(file){
 
 //remove a file from the playlist
 function remove(file, elem){
-	var $playing = $(".ui-layout-center .playing");
+	var playing = $(".ui-layout-center .playing").children('td:last-child').html();
 	var next = getNextSong();
 	
 	$.ajax({
@@ -319,7 +319,7 @@ function remove(file, elem){
 	   dataType:"json",
 	   success: function(msg){
 		   //stop it from playing if it is
-		   if(file == $playing.children('td:last-child').html()){
+		   if(file == playing){
 				playbuttonClick($(next.element).children("td.playlist-buttons").children("a:first-child"));
 				//scroll to the next item
 				$(next.element).scrollintoview({duration: 1000});
