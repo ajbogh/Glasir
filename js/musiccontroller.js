@@ -39,14 +39,20 @@ function loadStartup(){
 			});
 			//alert(elem.length);
 			if(elem.size() > 0){ //play the last song from the cookie
-				playbuttonClick($(".playlist tr td:last-child").filter(function(index){
+				/*playbuttonClick($(".playlist tr td:last-child").filter(function(index){
 					return $(this).html() === lastSong;
-				}).siblings(":first").children("a:first-child"));
+				}).siblings(":first").children("a:first-child"));*/
+				playbuttonClick(elem.siblings(":first").children("a:first-child"));
+				elem.parent().scrollintoview({duration: 1000});
 			}else{ //play the first song in the list
-				playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+				elem = $(".ui-layout-center table tr:eq(1) td:first-child a:first-child");
+				playbuttonClick(elem);
+				elem.parent().parent().scrollintoview({duration: 1000}); //probably not necessary
 			}	
 		}else{
+			elem = $(".ui-layout-center table tr:eq(1) td:first-child a:first-child");
 			playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+			elem.parent().parent().scrollintoview({duration: 1000}); //probably not necessary
 		}
 	}
 }
@@ -392,6 +398,7 @@ function playnext(){
 	$nextSongElement = nextSong.element;
 	
 	playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
+	$($nextSongElement).scrollintoview({duration: 1000});
 }
 /**
  * Gets the previous song to play. 
