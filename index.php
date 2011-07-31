@@ -105,6 +105,7 @@
 			<span id="playtoggle"><img src="images/audio-playbutton.png" onclick="playtoggle(this);" /></span>
 			<span id="pausetoggle"><img src="images/audio-pausebutton.png" onclick="playtoggle(this);" /></span>
 			<span id="nextbutton"><img src="images/audio-nextbutton.png" onclick="playnext();" /></span>
+			<span id="volumebutton"><img src="images/audio-volumebutton.png" onclick="showVolume(this);"/></span>
 			<span id="gutter">
 				<div id="positionbutton"><img src="images/audio-positionbutton.png" /></div>
 				<span id="buffering">
@@ -112,9 +113,12 @@
 				</span>
 				<span id="handle" class="ui-slider-handle" />
 			</span>
-			<span id="timeleft" />
+			
 			<div class="clear"></div>
 			<div id="currentsong"></div>
+			<span id="timeleft" />
+			<div id="volume">
+			</div>
 		</div>
 		<div class="clear"></div>
 		<div id="account" class="login">

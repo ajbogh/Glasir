@@ -41,6 +41,13 @@
 	background-repeat:no-repeat;
 	vertical-align:middle;
 }
+#volumebutton{
+	display:inline-block;
+	width:30px;
+	height:30px;
+	background-repeat:no-repeat;
+	vertical-align:middle;
+}
 
 #gutter {
 	display:inline-block;
@@ -104,4 +111,42 @@
 
 #currentsong {
 	margin-top:15px;
+}
+
+#volume {
+	display: none;
+	position:absolute;
+	border:1px solid #3d770b;
+	background-color: #333;
+	width: 295px;
+	height: 25px;
+	padding: 5px;
+	
+	-moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -khtml-border-radius: 5px;
+    border-radius: 5px;
+}
+#volume div {
+	border:1px solid #3d770b;
+	background-color:rgb(64,64,64);
+	width:5px;
+	height:23px;
+	display:inline-block;
+	margin:0px 1px 0px 0px;
+}
+#volume div:last-child {
+	margin:0px;
+}
+#volume div.hover {
+	background-color:#c3f930;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#c3f930', endColorstr='#3d770b'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#c3f930), to(#3d770b)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #c3f930,  #3d770b); /* for firefox 3.6+ */ 
+}
+#volume div.down {
+	background-color:#3d770b;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d770b', endColorstr='#333'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#3d770b), to(#333)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #c3f930,  #3d770b); /* for firefox 3.6+ */ 
 }

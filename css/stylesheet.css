@@ -99,7 +99,6 @@ div.login a:hover{
 #loginscreen, #registerscreen {
 	border: 2px solid rgb(195,249,48);
 	position: absolute;
-	background-color:#fff;
 	z-index:1000;
 	display:none;
 	padding:5px;

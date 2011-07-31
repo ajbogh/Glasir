@@ -1,3 +1,5 @@
+var volumeDivsCount = 37;
+
 /**
  * Gets a file tree from the server.
  * Appends each folder and file as a UL/LI element
@@ -201,6 +203,11 @@ function play(filename){
 			$("#playtoggle").addClass("playing"); 
 			$("#pausetoggle").addClass("playing");
 			//$("#audioPlayer").play();
+			volume = (getCookie("volume") != "" && getCookie("volume") != null?getCookie("volume"):""+volumeDivsCount);
+			volume = parseInt(volume);
+			$(audio).attr("volume",volume/volumeDivsCount);
+			//audio.setAttribute("volume",volume);
+			
 			$(audio).audivid("play");
 			checkPlayInterval = setInterval(function(){
 				if(audio.currentTime >= previousCurrentTime + 1 //this was an old problem, the current time in Chrome would continue past the duration 
@@ -413,5 +420,93 @@ function playprevious(){
 		$previousSongElement = previousSong.element;
 		
 		playbuttonClick($($previousSongElement).children(".playlist-buttons").children("a:first-child"));
+	}
+}
+
+/*
+ * Shows or hides the volume control.
+ */
+var volumeTimeout;
+var $volumediv;
+function showVolume(anchor){
+	clearTimeout(volumeTimeout);
+	volumeTimeout = setTimeout("$volumediv.slideToggle(150)",2000);
+	
+	$parent = $(anchor);
+	$volumediv = $("#volume");
+	$volumediv.css({"left":($parent.offset().left) + "px"});
+	$volumediv.css({"top":($parent.offset().top + $parent.height()) + "px"});
+	
+	$volumediv.empty();
+	//get volume from cookie
+	//if blank, set volume to max
+	//use logarithmic calculation for volume.
+	html = "";
+	for(i = 0; i < volumeDivsCount; i++){
+		html += "<div onmouseover=\"volumeHover(this);\" onmouseout=\"hideVolume();\" onclick=\"setVolume(this);\"></div>";
+	}
+	$volumediv.html(html);
+	
+	volume = (getCookie("volume") != "" && getCookie("volume") != null?getCookie("volume"):""+volumeDivsCount);
+	volume = parseInt(volume);
+	//$elem = $(elem);
+	$children = $volumediv.children("div");
+	for(i=0; i < $children.length; i++){
+		if(i <= volume){
+			//$($children[i]).addClass("down");
+			$($children[i]).addClass("hover");
+		}else{
+			$($children[i]).removeClass("down");
+			$($children[i]).removeClass("hover");
+		}
+	}
+	
+	$volumediv.slideToggle(150);
+}
+function volumeHover(elem){
+	clearTimeout(volumeTimeout);
+	$volumediv = $("#volume");
+	$elem = $(elem);
+	$children = $volumediv.children("div");
+	volume = (getCookie("volume") != "" && getCookie("volume") != null?getCookie("volume"):""+volumeDivsCount);
+	volume = parseInt(volume);
+	for(i=0; i < $children.length; i++){
+		if(i <= volume && i > $elem.index()){
+			$($children[i]).addClass("down");
+		}else if(i <= $elem.index()){
+			$($children[i]).removeClass("down");
+			$($children[i]).addClass("hover");
+		}else{
+			$($children[i]).removeClass("hover");
+			$($children[i]).removeClass("down");
+		}
+	}
+}
+function hideVolume(){
+	$volumediv = $("#volume");
+	
+	volumeTimeout = setTimeout("$volumediv.slideToggle(150)",1000);
+}
+function setVolume(elem){
+	setCookie("volume",$elem.index(),365);
+	$("#audioPlayer").attr("volume",$elem.index()/volumeDivsCount);
+	
+	clearTimeout(volumeTimeout);
+	$volumediv = $("#volume");
+	$elem = $(elem);
+	$children = $volumediv.children("div");
+	volume = (getCookie("volume") != "" && getCookie("volume") != null?getCookie("volume"):""+volumeDivsCount);
+	volume = parseInt(volume);
+	
+	for(i=0; i < $children.length; i++){
+		if(i <= volume && i > $elem.index()){
+			$($children[i]).addClass("down");
+		}else if(i <= $elem.index()){
+			$($children[i]).removeClass("down");
+			$($children[i]).addClass("hover");
+		}else{
+			$($children[i]).removeClass("hover");
+			$($children[i]).removeClass("down");
+		}
 	}
 }
