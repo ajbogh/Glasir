@@ -2,20 +2,24 @@
 	ini_set("display_errors",1);
 	ini_set("error_reporting",E_ALL);
 	error_reporting(E_ALL);
+	//ini_set("session.save_path","/tmp");
 	session_start();
 	
-	header('Content-Type: text/html; charset=utf-8');
+	/*header('Content-Type: text/html; charset=utf-8');*/
 
 
-	$appconf['mediaFolder'] = '/media/music';
+	$appconf['mediaFolder'] = '/media/Prometheus/Music';
 	$appconf['salt'] = '87584f7e2bc94097b614d00a672c8833'; //anything.
-	$appconf['database'] = 'glasir';
-	$appconf['dbuser'] = 'myuser';
-	$appconf['dbpassword'] = 'mypassword';
+	$appconf['database'] = 'Glasir';
+	$appconf['dbuser'] = 'ajbogh';
+	$appconf['dbpassword'] = 'NOTMYPASSWORD';
 	$appconf['dbserver'] = 'localhost';
-	$appconf['maildomain'] = 'mydomain.com';
+	$appconf['maildomain'] = 'allanbogh.com'; //doesn't do anything yet.
 	$appconf['adminreplyto'] = 'ajbogh@allanbogh.com'; //more to come from this
 	$appconf['allowemail'] = false; //more to come from this
+
+	//TODO: build a language class for users.
+	$lang['title'] = 'Glasir - The Golden Tree of Music';
 	
 	$allowedExtensions = array('mp3','ogg','wma'); //may include more extensions in the future
 
@@ -24,5 +28,18 @@
 	$selected = mysql_select_db($appconf['database'],$dbconn);
 	if(!$selected){
 		 die("Database selection error.");
+	}
+	
+	//file link for media
+	if(file_exists("media/sym") && file_exists("media/tmp") && readlink("media/sym") == $appconf['mediaFolder']){
+		//echo readlink("media/sym");
+	}else{
+		@unlink("media/sym"); //delete existing link
+		@unlink("media/tmp"); //create temp directory for oggs
+		if(symlink($appconf['mediaFolder'],"media/sym") && symlink('/tmp',"media/tmp")){ //create new link
+			echo "Successfully created a symbolic link to your media. Please refresh the website."; 
+		}else{
+			echo "Error: Could not create a symbolic link within the 'media' folder. Please make sure the media folder's permissions are set correctly.";
+		}
 	}
 ?>

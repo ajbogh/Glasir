@@ -1,0 +1,54 @@
+.ui-layout-center {
+	overflow:auto;
+	padding:0px !important;
+}
+.ui-layout-center table {
+	width:100%;
+	border-spacing:0px;
+}
+.ui-layout-center table tr:hover {
+	background-color:rgb(64,64,64);
+}
+.ui-layout-center table tr.playing {
+	background-color:rgb(32,32,32);
+}
+.ui-layout-center table tr.playing:hover {
+	background-color:rgb(128,128,128);
+}
+.ui-layout-center table th {
+	/*background-color:rgb(125,205,126);*/
+	background-color:rgb(70,138,15);
+	padding:2px;
+}
+.ui-layout-center table td {
+	border-right:1px solid rgb(70,138,15);
+	border-bottom:1px solid rgb(70,138,15);
+	padding:2px;
+}
+.ui-layout-center table tr td:last-child {
+	border-right:none;
+}
+
+.ui-layout-west{
+	white-space:nowrap;
+}
+.ui-layout-west ul li {
+	cursor:pointer;
+}
+
+
+.ui-layout-north {
+	background-image: -moz-linear-gradient(
+		center bottom,
+	    rgb(70,138,15) 00%, /*rgb(172,255,176) 00%,*/
+	    rgb(0,0,0) 50%
+	) !important;
+    background-image: -webkit-gradient(
+	    linear,
+	    left bottom,
+	    left top,
+	    color-stop(0.00, rgb(70,138,15)),
+	    color-stop(0.50, rgb(0,0,0))
+	) !important;
+	overflow:hidden !important;
+}

@@ -19,6 +19,10 @@ jQuery.fn.extend({
 	}
 });
 
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return !(a.indexOf(i) > -1);});
+};
+
 function showLogin(parent){
 	$('#registerscreen').hide();
 	$('#loginscreen').css('left',$(parent).offset().left-($('#loginscreen').width()-$(parent).width()+15)).css('top',$(parent).offset().top+$(parent).height()).show();
@@ -172,8 +176,14 @@ function debug(obj, callback){
     for(i in obj){
         out += i+" - "+obj[i]+"\n";
     }
-    callback(out);
+    if(typeof callback === "undefined"){
+    	alert(out)
+    }else{
+    	callback(out);
+    }
 }
+
+
 
 
 

@@ -1,6 +1,9 @@
 <?php
 	require_once 'includes/config.inc.php';
 	
+	ini_set('display_errors', 1);
+ 	error_reporting(E_ALL);
+	
 	if(!isset($_SESSION['id'])) exit;
 	
 	$userid = $_SESSION['id'];
@@ -8,16 +11,16 @@
 	if(isset($_POST['action'])){
 		switch($_POST['action']){
 			case 'queue':
-				enqueue($userid,$dbconn);
+				echo json_encode(enqueue($userid,$dbconn));
 				break;
 			case 'remove':
-				remove($userid,$dbconn);
+				echo json_encode(remove($userid,$dbconn));
 				break;
 			default:
 				break;
 		}	
 	}else{ //no action set, just show playlist
-		showPlaylist($userid,$dbconn);
+		echo json_encode(showPlaylist($userid,$dbconn));
 	}
 	
 	function updateTrackInfo($track,$dbconn){
@@ -82,13 +85,13 @@
 					}
 					$rows[] = $row;
 				}
-				echo json_encode(array('result'=>$rows,'return'=>0));
+				return array('result'=>$rows,'return'=>0);
 
 			}else{
-				echo json_encode(array('error'=>'You do not have a playlist yet.','return'=>1));
+				return array('error'=>'You do not have a playlist yet.','return'=>1);
 			}
 		}else{
-			echo json_encode(array('error'=>'An error occurred getting your playlist. '.mysql_error($dbconn),'return'=>1));
+			return array('error'=>'An error occurred getting your playlist. '.mysql_error($dbconn),'return'=>1);
 		}	
 	}
 	
@@ -98,12 +101,14 @@
 			  WHERE Filename='".mysql_real_escape_string(htmlspecialchars_decode($_POST['filename']))."'";
 		$result = mysql_query($query,$dbconn);
 		$songID = null;
+
 		if(mysql_num_rows($result) == 0){
 			//insert song
 			$query = "INSERT INTO Songs
 			  (Filename, LastUpdated) 
 			  VALUES ('".mysql_real_escape_string(htmlspecialchars_decode($_POST['filename']))."', NOW())";
 			$result = mysql_query($query,$dbconn);
+
 			$songID = mysql_insert_id($dbconn);
 			
 			updateTrackInfo(htmlspecialchars_decode($_POST['filename']),$dbconn);
@@ -169,7 +174,7 @@
 			$numrows = mysql_num_rows($result);
 			if($numrows > 0){
 				$row = mysql_fetch_assoc($result);
-				echo json_encode(array('result'=>array($row),'return'=>0));
+				return array('result'=>array($row),'return'=>0);
 			}
 		}	
 	}

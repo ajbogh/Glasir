@@ -20,6 +20,7 @@ if(!in_array($ext,$allowedExtensions)){
 
 if(file_exists($track)){
 	if(!$duration){
+
 		//load the information into the database
 		$query = "SELECT ID, Title, LastUpdated 
 				  FROM Songs
@@ -34,24 +35,23 @@ if(file_exists($track)){
 			$result = mysql_query($query,$dbconn);
 		}
 		
-		header("Content-Transfer-Encoding: binary"); 
 		switch($type){
 			case "ogg":
 				header("Content-Type: audio/ogg");
-				header('Content-Disposition: filename="'.basename($track).'.ogg"');
+				header('Content-Disposition: attachment; filename="'.basename($track).'.ogg"');
 				break;
 			case "mp3":
+				//header("Content-type: application/octet-stream");
 				header("Content-Type: audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3");
-				header('Content-Disposition: filename="'.basename($track).'"');
+				header('Content-Disposition: attachment; filename="'.basename($track).'"');
 				break;
 			default:
 				header("Content-Type: audio/mpeg, audio/x-mpeg, audio/x-mpeg-3, audio/mpeg3");
-				header('Content-Disposition: filename="'.basename($track).'"');
+				header('Content-Disposition: attachment; filename="'.basename($track).'"');
 		}
+		header("Content-Transfer-Encoding: binary"); 
 		header("X-Pad: avoid browser bug");
 		
-		ob_clean();
-	    flush();
 	    //check if requested type should be ogg
 	    if($type == 'ogg' && $ext == 'mp3'){
 	    	//convert to ogg
@@ -61,7 +61,6 @@ if(file_exists($track)){
 		    	copy($track,'/tmp/'.basename($track));
 		    	//set up the command to convert the file
 		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w - | oggenc - -o "'.'/tmp/'.basename($track).'.ogg"';
-		    	//$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w "'.'/tmp/'.basename($track).'.raw" && oggenc "'.'/tmp/'.basename($track).'.raw" -b 128 -o "'.'/tmp/'.basename($track).'.ogg" && rm -f "'.'/tmp/'.basename($track).'.raw"';
 		    	$out = shell_exec($command);
 		    	//clean up copied mp3
 		    	unlink('/tmp/'.basename($track));
@@ -69,9 +68,10 @@ if(file_exists($track)){
 	    	$track = '/tmp/'.basename($track).'.ogg';
 	    }
 	    header('Content-length: ' . filesize($track));
+	    header('Cache-Control: no-cache');
+		ob_clean();
+    	flush();  
 		readfile($track);
-		
-		
 		exit;
 	}else{  //get the duration
 		//query the dataabase to determine if it has the duration 

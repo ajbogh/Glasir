@@ -1,25 +1,62 @@
 var volumeDivsCount = 37;
+var playedSongs = new Array();
+var stillPlaying = false;
+var stillPlayingTimeout;
 
 /**
  * Gets a file tree from the server.
  * Appends each folder and file as a UL/LI element
  */
 function getFileList(directory,ul){
-	$ul = $(ul);
+	var $ul = $(ul);
 	if($ul.children('ul').length > 0){
 		//hide children
 		$ul.children('ul').remove();
+		$("#leftscrollbar").css({"height":($("#left").height()*($("#left").height()/$("#left>ul").height()))+"px" });
 	}else{
 		//show children
 		$.ajax({
 				type:"GET",
 				url:"phpFileTree/php_file_tree.php",
-				data:{dir:directory,
-						extensions:['mp3','ogg','MP3']
+				dataType:"json",
+				data:{
+						"dir":directory,
+						"extensions":['mp3','ogg','MP3'],
+						"output":"json"
 					},
 				success:function(data){
 					$ul.children('ul').remove();
-					$ul.append(data);
+					$innerul = $('<ul></ul>');
+					for(var i=0; i<data.length; i++){
+						if(data[i].type == "directory"){
+							var $li = $('<li />');
+							$li.addClass("pft-directory");
+							$li.mousedown(function(){ MoveLi(this); });
+							var $span = $('<span />',{
+								'data-fullpath':data[i].fullpath
+							});
+							$span.click(function(){ getFileList($(this).attr('data-fullpath'),this.parentNode); });
+							$span.html(data[i].entry);
+							$li.append($span);
+							$innerul.append($li);
+						}else{ //file
+							var $li = $('<li />');
+							var ext = "ext-"+data[i].entry.substring(data[i].entry.lastIndexOf(".") + 1);
+							$li.addClass("pft-file "+ext.toLowerCase());
+							$li.mousedown(function(){ MoveLi(this); });
+							$li.mouseup(function(){ DropLi(this); });
+							var $a = $('<a />',{
+								'data-fullpath':data[i].fullpath	
+							});
+							$a.click(function(){ queue($(this).attr('data-fullpath')); });
+							$a.html(data[i].entry);
+							$li.append($a);
+							$innerul.append($li);
+						}
+					}
+					$ul.append($innerul);
+					$("#leftscrollbar").css({"height":($("#left").height()*($("#left").height()/$("#left>ul").height()))+"px" });
+					
 				}
 		});
 	}
@@ -34,26 +71,20 @@ function loadStartup(){
 		if(getCookie("playing") != null && getCookie("playing") != "null"){
 			//set the last playing song in case the page is refreshed.
 			var lastSong = getCookie("playing");
-			//alert(lastSong); //debug
 			elem = $(".playlist tr td:last-child").filter(function(index){
-				//alert($(this).html());
 				return $(this).html() === lastSong;
 			});
-			//alert(elem.length);
 			if(elem.size() > 0){ //play the last song from the cookie
-				/*playbuttonClick($(".playlist tr td:last-child").filter(function(index){
-					return $(this).html() === lastSong;
-				}).siblings(":first").children("a:first-child"));*/
 				playbuttonClick(elem.siblings(":first").children("a:first-child"));
 				elem.parent().scrollintoview({duration: 1000});
 			}else{ //play the first song in the list
-				elem = $(".ui-layout-center table tr:eq(1) td:first-child a:first-child");
+				elem = $(".playlist tr:eq(1) td:first-child a:first-child");
 				playbuttonClick(elem);
 				elem.parent().parent().scrollintoview({duration: 1000}); //probably not necessary
 			}	
 		}else{
-			elem = $(".ui-layout-center table tr:eq(1) td:first-child a:first-child");
-			playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+			elem = $(".playlist tr:eq(1) td:first-child a:first-child");
+			playbuttonClick($(".playlist tr:eq(1) td:first-child a:first-child"));
 			elem.parent().parent().scrollintoview({duration: 1000}); //probably not necessary
 		}
 	}
@@ -74,13 +105,15 @@ function getPlaylist(){
 		dataType:"json",
 		success:function(data){
 			if(data['return']==0){
-				$(".ui-layout-center").empty();
+				$("#right").empty();
 				$playlist = $("<table class=\"playlist\"></table>");
 				headers = "<tr>";
 				headers += "<th></th><th>Title</th><th>Artist</th><th>Album</th><th>Genre</th><th>Year</th><th>Bitrate</th><th>Duration</th><th style=\"display:none;\">Duration</th>";
 				headers += "</tr>";
 				$playlist.append(headers);
+				
 				for(i in data['result']){
+					if(typeof data['result'][i] != "object") continue; //prevent unwanted records
 					html = "<tr>";
 					html += "<td class=\"playlist-buttons\">" +
 								"<a href=\"javascript:void(0);\" onclick=\"playtoggle(this);playbuttonClick(this);\">" + //playbuttonClick(this);
@@ -101,12 +134,13 @@ function getPlaylist(){
 					html += "<td style=\"display:none;\">"+data['result'][i]['Filename']+"</td>";
 					html += "</tr>";
 					$playlist.append(html);
+					//debug(data['result'][i]);
 				}
-				$(".ui-layout-center").append($playlist);
+				$("#right").append($playlist);
 				
 				loadStartup();
 			}else{
-				$(".ui-layout-center").empty().append(data['error']);
+				$("#right").empty().append(data['error']);
 			}
 		},
 		error:function(xhr,ajaxOptions,thrownError){
@@ -117,10 +151,12 @@ function getPlaylist(){
 
 //pauses or plays current song
 function playtoggle(parent){
-	if($("#audioPlayer").audivid("isplaying") == 1){ //pause
+	if($("#audioPlayer").audivid("ispaused") == 0){ //pause
 		$("#playtoggle").removeClass("playing");
 		$("#pausetoggle").removeClass("playing");
 		$(".playing td a:first-child img").attr('src','images/playbutton.png');
+		//stillPlaying = false;
+		//clearTimeout(stillPlayingTimeout);
 	}else{  //play
 		$("#playtoggle").addClass("playing");
 		$("#pausetoggle").addClass("playing");
@@ -152,6 +188,9 @@ function cycleAutoplay(){
 		setCookie("autoplay","on",365);
 	}
 }
+/*function noLongerPlaying(){
+	stillPlaying = false;
+}*/	
 
 
 /*
@@ -179,9 +218,11 @@ function playbuttonClick(elem){
 	setCookie("playing",$(elem).parent().parent().children('td:last-child').html(),365);
 }
 function play(filename){
+	thefile = filename.replace(mediaFolder,'media/sym');
 	$("#audioPlayer").remove(); //remove the current audio player
 	
-	var audio = document.createElement('audio');
+	audio = new Audio(); //document.createElement('audio');
+	$(audio).audivid("init");
 	var alerted = 0;
 	var duration = 0;
 	var checkPlayInterval;
@@ -202,43 +243,66 @@ function play(filename){
 	audio.addEventListener( "canplay", function(){
 			$("#playtoggle").addClass("playing"); 
 			$("#pausetoggle").addClass("playing");
-			//$("#audioPlayer").play();
+			
 			volume = (getCookie("volume") != "" && getCookie("volume") != null?getCookie("volume"):""+volumeDivsCount);
 			volume = parseInt(volume);
-			$(audio).attr("volume",volume/volumeDivsCount);
-			//audio.setAttribute("volume",volume);
+			$(audio).audivid("volume",volume/volumeDivsCount);
 			
 			$(audio).audivid("play");
-			checkPlayInterval = setInterval(function(){
-				if(audio.currentTime >= previousCurrentTime + 1 //this was an old problem, the current time in Chrome would continue past the duration 
-					|| audio.currentTime == 9223372013568 //sometimes Chrome ends at this magic number. gah!
-					|| audio.currentTime > duration - 1){  //firefox doesn't always end at or near the duration. gah!
-					$(audio).audivid("pause");
-					clearInterval(checkPlayInterval);
-					
-					nextSong = getNextSong();
-					//alert(nextSong.file);
-					$nextSongElement = nextSong.element;
-
-					playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
-					//scroll to next song
-					$($nextSongElement).scrollintoview({duration: 1000});
-				}else{ //debug check
-					//$("#player_hold").html(previousCurrentTime+" - "+audio.currentTime+" - "+duration);
-				}
-			},1000);
 	}, true);
-	audio.addEventListener( "timeupdate", function(){ 
-			previousCurrentTime = this.currentTime;
-			$loading = $("#loading"); 
+	$(audio).bind("timeupdate", function(){ 
+		//console.log(duration+" - "+this.currentTime);
+		previousCurrentTime = this.currentTime;
+		$loading = $("#loading"); 
+		if(($loading.parent().parent().width()*(previousCurrentTime/duration)) > $loading.parent().parent().width()){
+			//do nothing, we're at or near 100%
+			//$loading.width(($loading.parent().parent().width()*(previousCurrentTime/duration))+"px");
+		}else{
 			$loading.width(($loading.parent().parent().width()*(previousCurrentTime/duration))+"px");
-			$("#positionbutton").css("margin-left",($loading.width()-5)+"px");
-			$("#player_hold").html(previousCurrentTime+" - "+this.currentTime+" - "+duration);
-		}, true);
+		}
+		$("#positionbutton").css("margin-left",($loading.width()-5)+"px");
+		$("#player_hold").html(previousCurrentTime+" - "+this.currentTime+" - "+duration);
+	});
+	$(audio).bind("ended",function(){
+		console.log("-+-"+$(audio).audivid("isplaying")+"-+- paused:"+$(audio).audivid("ispaused"));
+		$(audio).audivid("pause");
+		clearInterval(checkPlayInterval);
+		
+		nextSong = getNextSong();
+		$nextSongElement = nextSong.element;
+
+		delete audio;
+		playbuttonClick($($nextSongElement).children(".playlist-buttons").children("a:first-child"));
+		//scroll to next song
+		$($nextSongElement).scrollintoview({duration: 1000});
+	});
+	$(audio).bind("play",function(){
+		console.log("play");
+	});
+	$(audio).bind("emptied",function(){
+		console.log("emptied");
+	});
+	$(audio).bind("abort",function(){
+		console.log("emptied");
+	});
+	$(audio).bind("error",function(e){
+		console.log("error: "+e.target.src);
+		//debug(e.target.error);
+	});
+	$(audio).bind("stalled",function(){
+		console.log("stalled");
+	});
+	$(audio).bind("suspend",function(){
+		console.log("suspend");
+	});
+	$(audio).bind("waiting",function(){
+		console.log("waiting");
+	});
 	
 	//Chrome still has issues with ogg.
 	if(audio.canPlayType("audio/mp3")){
-		audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
+		audio.src = thefile;
+		//audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
 	}else if($.browser.mozilla && audio.canPlayType("audio/ogg")){
 		audio.src = "mediaservice.php?type=ogg&file="+escape(filename);
 		$.ajax({
@@ -247,24 +311,24 @@ function play(filename){
 			   dataType: "script"
 			 });
 	}else{ //Can anything else just use mp3?
-		audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
+		audio.src = thefile;
+		//audio.src = "mediaservice.php?type=mp3&file="+escape(filename);
 	}
 	
 	$("#player").html(audio);
 	audio.load();
+	//console.log(audio.src.split("?")[0]);
 	$.ajax({
 	   type: "GET",
-	   url: audio.src.split("?")[0],
+	   url: 'mediaservice.php', //audio.src.split("?")[0],
 	   data: "duration=true&file="+escape(filename),
-	   success: function(msg){
-		   //alert(msg);
-		   info = $.parseJSON(msg);
-		   
-		   duration = info['duration'];
-		   
+	   dataType: "json",
+	   success: function(data){
+		   duration = data['duration'];
 	   },
 	   error:function(xhr,ajaxOptions,thrownError){
-			alert(thrownError);
+			//console.log("error");
+			console.log(xhr);
 	   }
 	 });	
 }
@@ -279,6 +343,7 @@ function queue(file){
 		dataType:"json",
 		success:function(data){
 			if(data['return']==0){
+				
 				//add result to end of list
 				html = "<tr>";
 				html += "<td class=\"playlist-buttons\">" +
@@ -300,9 +365,9 @@ function queue(file){
 				html += "<td style=\"display:none;\">"+data['result'][0]['Filename']+"</td>";
 				html += "</tr>";
 				
-				$(".ui-layout-center .playlist").append(html);
+				$(".playlist").append(html);
 				//scroll to the bottom of the playlist
-				$(".ui-layout-center").animate({ scrollTop: $(".ui-layout-center").attr("scrollHeight") }, 1000);
+				$("#right").animate({ scrollTop: $("#right").attr("scrollHeight") }, 1000);
 			}
 			//getPlaylist();
 		},
@@ -314,7 +379,7 @@ function queue(file){
 
 //remove a file from the playlist
 function remove(file, elem){
-	var playing = $(".ui-layout-center .playing").children('td:last-child').html();
+	var playing = $(".playing").children('td:last-child').html();
 	var next = getNextSong();
 	
 	$.ajax({
@@ -347,24 +412,46 @@ function remove(file, elem){
 //then increments to the next one if the playmode is default
 //or a random one if playMode is 'random'
 function getNextSong(){
+	console.log("getNextSong");
 	playMode = 'default';
 	if(getCookie("playMode") != null){
 		playMode = getCookie("playMode");
 	}
 	
 	if(playMode == 'default'){
-		next = $(".ui-layout-center .playing").next();
-		if(next.length == 0) next = $(".ui-layout-center .playing").siblings().first().next(); //first is a header
+		next = $(".playing").next();
+		if(next.length == 0) next = $(".playing").siblings("tr").first().next(); //first is a header
 		return {file:next.children('td:last-child').html(),
 				element:next
 			};
 	}else if(playMode == 'random'){
-		siblings = $(".ui-layout-center .playing").siblings();
-		rand = Math.floor(Math.random() * siblings.length);
-		if(rand == 0) rand = 1;
-		next = $(".ui-layout-center .playing").siblings().eq(rand);
+		siblings = $(".playing").siblings("tr");
 		
-		if(next.length == 0) next = $(".ui-layout-center .playing").siblings().first().next(); //first is a header
+		availableIndices = new Array();
+		for(i=1; i < siblings.length; i++){ //start at 1 because 0 is the header
+			availableIndices[availableIndices.length] = $(siblings[i]).index();
+		}
+		current = $(".playing").index();
+		availableIndices[availableIndices.length] = current;
+		
+		diff = availableIndices.diff(playedSongs);
+		
+		rand = 0;
+		if(diff.length > 1){
+			rand = Math.ceil(Math.random() * diff.length);
+		}
+
+		next = $(".playing").siblings("tr").eq(diff[rand]);
+		
+		if(next.length == 0){
+			next = $(".playing").siblings("tr").first().next(); //first is a header
+			rand = 1;
+		}
+		//reset played songs list when all of the songs have been played.
+		if(playedSongs.length == $(".playing").siblings("tr").length){
+			playedSongs = new Array();
+		}
+		playedSongs[playedSongs.length] = diff[rand];
 		return {file:next.children('td:last-child').html(),
 				element:next
 			};
@@ -376,22 +463,22 @@ function getNextSong(){
  */
 function getPreviousSong(){
 	//get current playing song.
-	playingElement = $(".ui-layout-center .playing");
+	playingElement = $(".playing");
 	if(playingElement.length > 0){
 		if(playingElement.parent().children().index(playingElement) > 1){
-			previous = $(".ui-layout-center .playing").prev();
+			previous = $(".playing").prev();
 			return {file:previous.children('td:last-child').html(),
 					element:previous
 				};
 		}else{
 			//return the first one.
-			previous = $(".ui-layout-center .playing").siblings().first().next(); //first is a header
+			previous = $(".playing").siblings().first().next(); //first is a header
 			return {file:previous.children('td:last-child').html(),
 				element:previous
 			};
 		}
 	}else{ //return the first one.
-		previous = $(".ui-layout-center table tr:eq(1)") //first row is a header
+		previous = $(".playlist tr:eq(1)") //first row is a header
 		return {file:previous.children('td:last-child').html(),
 			element:previous
 		};

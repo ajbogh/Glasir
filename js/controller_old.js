@@ -1,3 +1,9 @@
+/**
+ * NOTE: This file is deprecated.
+ * 
+ */
+
+
 
 /**
  * Gets a file tree from the server.
@@ -13,10 +19,13 @@ function getFileList(directory,ul){
 		$.ajax({
 				type:"GET",
 				url:"phpFileTree/php_file_tree.php",
-				data:{dir:directory,
-						extensions:['mp3','ogg','MP3']
+				data:{
+						"dir":directory,
+						"extensions":['mp3','ogg','MP3'],
+						"output":"json"
 					},
 				success:function(data){
+					console.log(data);
 					$ul.children('ul').remove();
 					$ul.append(data);
 				}
@@ -53,17 +62,13 @@ function playbuttonClick(elem){
  * The user must be logged in and the session created.
  */
 function getPlaylist(){
-	//TODO: If a song is currently playing then don't play the next song.
-	// In other words, adding a song shouldn't replay the song.
-	// Also, check into why adding a song takes so long and messes up the web server. 
-	
 	$.ajax({
 		type:"GET",
 		url:"playlist.php",
 		dataType:"json",
 		success:function(data){
 			if(data['return']==0){
-				$(".ui-layout-center").empty();
+				$("#right").empty();
 				$playlist = $("<table class=\"playlist\"></table>");
 				headers = "<tr>";
 				headers += "<th></th><th>Title</th><th>Artist</th><th>Album</th><th>Genre</th><th>Year</th><th>Bitrate</th><th>Duration</th><th style=\"display:none;\">Duration</th>";
@@ -91,7 +96,7 @@ function getPlaylist(){
 					html += "</tr>";
 					$playlist.append(html);
 				}
-				$(".ui-layout-center").append($playlist);
+				$("#right").append($playlist);
 				
 				//play the first song in the list. The song file is in the last column (hidden)
 				if(getCookie("playing") != null && getCookie("playing") != "null"){
@@ -105,13 +110,13 @@ function getPlaylist(){
 							return $(this).html() === lastSong;
 						}).siblings(":first").children("a:first-child"));
 					}else{
-						playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+						playbuttonClick($(".playlist tr:eq(1) td:first-child a:first-child"));
 					}	
 				}else{
-					playbuttonClick($(".ui-layout-center table tr:eq(1) td:first-child a:first-child"));
+					playbuttonClick($(".playlist tr:eq(1) td:first-child a:first-child"));
 				}
 			}else{
-				$(".ui-layout-center").empty().append(data['error']);
+				$("#right").empty().append(data['error']);
 			}
 		},
 		error:function(xhr,ajaxOptions,thrownError){

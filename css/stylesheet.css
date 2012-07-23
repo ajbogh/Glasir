@@ -1,5 +1,12 @@
 @CHARSET "UTF-8";
 
+/*
+	TODO: button styles
+	TODO: input box styles (rounded corners, background, font)
+*/
+
+
+/* General styles */
 body,
 html {
 	margin:0;
@@ -7,6 +14,7 @@ html {
 	font-family:Lucida Grande, Lucida Sans, Lucida Sans Unicode, Helvetica, Arial, san-serif;
 	font-size:.95em;
 	color:white;
+	background-color: #000;
 }
 img {
 	border:0;	
@@ -23,52 +31,92 @@ div.clear {
 	color:#050;	
 }
 
-.ui-layout-center {
-	overflow:auto;
-	padding:0px !important;
+
+/* layout */
+#leftcontainer {
+	float:left;
 }
-.ui-layout-center table {
-	width:100%;
-	border-spacing:0px;
+#left {
+	float:left;
+	/* set width to percentage of page? */
+	/* maybe just hide it at first? */
+	width:350px;
+	/* TODO: use javascript to set height */
+	/*overflow:scroll;*/ /* TODO: is scroll good or something custom? */
+	clear:both;
+	overflow:hidden;
+	white-space:nowrap;
+	/* TODO: make this fully HTML5 compliant later
+	   Browsers currently don't implement the user-select code */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
 }
-.ui-layout-center table tr:hover {
-	background-color:rgb(64,64,64);
+#left ul li {
+	cursor:pointer;
 }
-.ui-layout-center table tr.playing {
-	background-color:rgb(32,32,32);
+#leftsubcontainer {
+	float:left;
 }
-.ui-layout-center table tr.playing:hover {
-	background-color:rgb(128,128,128);
+#leftbuttons {
+	height:25px;
+	clear:both;
+	border-bottom:1px solid rgb(0,68,0);
+	padding:5px;
 }
-.ui-layout-center table th {
-	/*background-color:rgb(125,205,126);*/
-	background-color:rgb(70,138,15);
-	padding:2px;
+#lefthidebar {
+	background-color: #333;
+	width:7px;
+	float:left;
 }
-.ui-layout-center table td {
+#leftscrollbar{ 
+	position:absolute;
+	height:20px;
+	width:7px;
+	background-color:#ff6600;
+}
+
+#right {
+	float:left;
+	overflow-y:scroll;
+}
+#right table tr td:last-child {
+	border-right:none;
+}
+#right table td {
 	border-right:1px solid rgb(70,138,15);
 	border-bottom:1px solid rgb(70,138,15);
 	padding:2px;
 }
-.ui-layout-center table tr td:last-child {
-	border-right:none;
+#right table th {
+	/*background-color:rgb(125,205,126);*/
+	background-color:rgb(70,138,15);
+	padding:2px;
 }
-
-.ui-layout-west{
-	white-space:nowrap;
+#right table tr.playing:hover {
+	background-color:rgb(128,128,128);
 }
-.ui-layout-west ul li {
-	cursor:pointer;
+#right table tr.playing {
+	background-color:rgb(32,32,32);
 }
-
-
-.ui-layout-north {
+#right table tr:hover {
+	background-color:rgb(64,64,64);
+}
+#right table {
+	width:100%;
+	border-spacing:0px;
+}
+#header {
 	background-image: -moz-linear-gradient(
 		center bottom,
 	    rgb(70,138,15) 00%, /*rgb(172,255,176) 00%,*/
 	    rgb(0,0,0) 50%
 	) !important;
-    background-image: -webkit-gradient(
+	background-image: -webkit-gradient(
 	    linear,
 	    left bottom,
 	    left top,
@@ -76,8 +124,20 @@ div.clear {
 	    color-stop(0.50, rgb(0,0,0))
 	) !important;
 	overflow:hidden !important;
+	height:110px;
+	padding:5px;
+	border-bottom: 2px solid rgb(0,68,0);
+}
+#footer {
+	height:25px;
+	padding-top:10px;
+	padding-left:10px;
+	border-top:2px solid #333;
 }
 
+
+
+/* login/register settings */
 div.login {
 	font-weight:bold;
 	float:right;
@@ -111,10 +171,15 @@ div.login a:hover{
 #loginscreen div.error, #registerscreen div.error,#registerscreen div.success{
 	display:none;	
 }
+
+
+/* player options */
 #player, #player_hold {
 	display:none;
 }
 
+
+/* Playlist options */
 table.playlist {
 	padding:0px;
 }
@@ -147,6 +212,7 @@ td.playlist-buttons img{
 	) !important;
 }
 
+/* footer buttons */
 .playmode {
 	width:25px;
 	height:25px;
