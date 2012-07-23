@@ -27,7 +27,7 @@ Music information is stored in a MySQL database. This includes the duration and 
 In the future this information will go towards choosing a suitable playlist for you.
 
 Glasir performs a file scan to obtain as much music information as possible before a song is played, however
-some functions take a bit longer, such as song duraction, so a secondary asynchronous process grabs the duration and updates 
+some functions take a bit longer, such as song duration, so a secondary asynchronous process grabs the duration and updates 
 the song information in the database. The first time the song is played the duration will say 0, 
 but the next time it'll display properly. 
 
