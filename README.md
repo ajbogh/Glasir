@@ -4,17 +4,17 @@
 2. Mysql Server
 3. Mysql user configured
 4. Blank Mysql database created
-5. mpg321 for mp3 to ogg conversion (Firefox browser support):
+5. mpg321 for mp3 to ogg conversion (Firefox browser support)
     
-    sudo apt-get install mpg321
+    $ sudo apt-get install mpg321
 
 ## Installation
 
 1. Copy config.inc.php.default to config.inc.php
 2. Add your own configuration data.
-3. Add the Apache user group to the media folder:
+3. Add the Apache user group to the media folder
     
-    sudo chown ajbogh:www-data media
+    $ sudo chown ajbogh:www-data media
     
 ## How Glasir Works
 
