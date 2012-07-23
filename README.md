@@ -34,7 +34,7 @@ but the next time it'll display properly.
 If you're using Firefox then Glasir will automatically choose ogg file formats. This requires a conversion from mp3 to ogg format
 which may take a few seconds. This one-time conversion is then stored in the temp folder for future plays.
 
-File browsing is handled one directory at a time, which increases folder navigation and allows Glasir to run on 
+File browsing is handled one directory at a time, which makes folder navigation faster and allows Glasir to run on 
 limited system specs. Glasir will scan your music folder for all files of certain types and folders and display a list. This
 list is generated in Javascript from a JSON output from the server. As you navigate the file tree you will send requests 
 back to the server and obtain a new JSON output for the next folder level. Eventually you will reach the songs you want.
