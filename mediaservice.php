@@ -57,15 +57,16 @@ if(file_exists($track)){
 	    	//convert to ogg
 	    	//copy to a temp directory (777 or php owner) in the web directory 
 	    	//php safe mode only allows exec within a safe dir
-	    	if(!file_exists('/tmp/'.basename($track).'.ogg')){
-		    	copy($track,'/tmp/'.basename($track));
+	    	$tempdir = sys_get_temp_dir();
+	    	if(!file_exists($tempdir.'/'.basename($track).'.ogg')){
+		    	copy($track,$tempdir.'/'.basename($track));
 		    	//set up the command to convert the file
-		    	$command = 'mpg321 "'.'/tmp/'.basename($track).'" -w - | oggenc - -o "'.'/tmp/'.basename($track).'.ogg"';
+		    	$command = 'mpg321 "'.$tempdir.'/'.basename($track).'" -w - | oggenc - -o "'.$tempdir.'/'.basename($track).'.ogg"'; //'/tmp/'
 		    	$out = shell_exec($command);
 		    	//clean up copied mp3
-		    	unlink('/tmp/'.basename($track));
+		    	unlink($tempdir.'/'.basename($track)); //'/tmp/'.basename($track));
 	    	}
-	    	$track = '/tmp/'.basename($track).'.ogg';
+	    	$track = $tempdir.'/'.basename($track).'.ogg';
 	    }
 	    header('Content-length: ' . filesize($track));
 	    header('Cache-Control: no-cache');

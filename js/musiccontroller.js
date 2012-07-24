@@ -25,6 +25,7 @@ function getFileList(directory,ul){
 						"output":"json"
 					},
 				success:function(data){
+					//console.log(data);
 					$ul.children('ul').remove();
 					$innerul = $('<ul></ul>');
 					for(var i=0; i<data.length; i++){
@@ -57,6 +58,9 @@ function getFileList(directory,ul){
 					$ul.append($innerul);
 					$("#leftscrollbar").css({"height":($("#left").height()*($("#left").height()/$("#left>ul").height()))+"px" });
 					
+				},
+				error:function(xhr){
+					console.log(xhr);
 				}
 		});
 	}

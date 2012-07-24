@@ -99,14 +99,14 @@ class PHPFileTree{
 
 	public function getJSON($file){
 		$directory = $this->directory;
-		$directory = mb_convert_encoding($directory, 'HTML-ENTITIES', mb_detect_encoding($directory));
+		//$directory = mb_convert_encoding($directory, 'HTML-ENTITIES', mb_detect_encoding($directory));
 		$php_file_tree = array();
 		//don't think this next line is needed anymore
 		if( $file != ".." && $file != "." ) { // Use 2 instead of 0 to account for . and .. "directories"
 			foreach( $file as $this_file ) {
-				if( $this_file != "." && $this_file != ".." ) {
-						
-					$this_file = mb_convert_encoding($this_file, 'HTML-ENTITIES', mb_detect_encoding($this_file));
+				if( $this_file != "." && $this_file != ".." ){
+					//echo $this_file."<br />";
+					//$this_file = mb_convert_encoding($this_file, 'HTML-ENTITIES', mb_detect_encoding($this_file));
 					
 					if(strrpos($this_file,"Could not open. Check permissions.") !== FALSE){
 						$php_file_tree[] = (Object)array(
