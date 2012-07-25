@@ -4,9 +4,10 @@
 2. Mysql Server
 3. Mysql user configured
 4. Blank Mysql database created
-5. mpg321 for mp3 to ogg conversion (Firefox browser support)
+5. mpg321 and oggenc for mp3 to ogg conversion (Firefox browser support)
     
     $ sudo apt-get install mpg321
+    $ sudo apt-get install vorbis-tools
 
 ## Installation
 
