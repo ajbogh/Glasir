@@ -183,6 +183,30 @@ function debug(obj, callback){
     }
 }
 
+function search(searchText, $resultsElement){
+	if(searchText == "") return false;
+	$.ajax({
+		url:"classes/DBFunctions.php",
+		data:{
+			action:"searchDB",
+			keyword:searchText
+		},
+		type:"POST",
+		dataType:"json",
+		success:function(data){
+			console.log(data);
+			
+			for(var i=0; i<data.length; i++){
+				$resultsElement.append(data[i].Title+"<br />");
+			}
+		},
+		error:function(xhr){
+			console.log(xhr);
+		}
+	});
+	return false;
+}
+
 
 
 

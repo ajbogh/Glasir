@@ -238,3 +238,19 @@ td.playlist-buttons img{
 	background-image: url("../images/audio-autoplay-on.png");
 	/*border:1px solid green;*/
 }
+
+div.panel {
+	display:none;
+	width:100%;
+	background-color: rgba(0,0,0,0.9);
+	position:absolute;
+	top:0;
+	left:0;
+}
+div.panel img.closeButton {
+	margin-right:10px;
+	margin-top: 10px;
+}
+div.panel>div {
+	margin:10px;
+}

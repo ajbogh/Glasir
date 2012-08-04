@@ -26,44 +26,60 @@ function getFileList(directory,ul){
 					},
 				success:function(data){
 					//console.log(data);
-					$ul.children('ul').remove();
-					$innerul = $('<ul></ul>');
-					for(var i=0; i<data.length; i++){
-						if(data[i].type == "directory"){
-							var $li = $('<li />');
-							$li.addClass("pft-directory");
-							$li.mousedown(function(){ MoveLi(this); });
-							var $span = $('<span />',{
-								'data-fullpath':data[i].fullpath
-							});
-							$span.click(function(){ getFileList($(this).attr('data-fullpath'),this.parentNode); });
-							$span.html(data[i].entry);
-							$li.append($span);
-							$innerul.append($li);
-						}else{ //file
-							var $li = $('<li />');
-							var ext = "ext-"+data[i].entry.substring(data[i].entry.lastIndexOf(".") + 1);
-							$li.addClass("pft-file "+ext.toLowerCase());
-							$li.mousedown(function(){ MoveLi(this); });
-							$li.mouseup(function(){ DropLi(this); });
-							var $a = $('<a />',{
-								'data-fullpath':data[i].fullpath	
-							});
-							$a.click(function(){ queue($(this).attr('data-fullpath')); });
-							$a.html(data[i].entry);
-							$li.append($a);
-							$innerul.append($li);
-						}
-					}
-					$ul.append($innerul);
-					$("#leftscrollbar").css({"height":($("#left").height()*($("#left").height()/$("#left>ul").height()))+"px" });
-					
+					processFileList(data,$ul);
 				},
 				error:function(xhr){
 					console.log(xhr);
 				}
 		});
 	}
+}
+
+/**
+ * takes the data json object and converts it to HTML,
+ * then puts the HTML in the jquery $ul object
+ * 
+ * data format:
+ * 	[
+ * 		{
+ * 			type:(directory, file)
+ * 			fullpath: /media/path/to/file
+ * 			entry: "filename.ext"
+ * 		}
+ * ]
+ */ 
+function processFileList(data,$ul){
+	$ul.children('ul').remove();
+	$innerul = $('<ul></ul>');
+	for(var i=0; i<data.length; i++){
+		if(data[i].type == "directory"){
+			var $li = $('<li />');
+			$li.addClass("pft-directory");
+			$li.mousedown(function(){ MoveLi(this); });
+			var $span = $('<span />',{
+				'data-fullpath':data[i].fullpath
+			});
+			$span.click(function(){ getFileList($(this).attr('data-fullpath'),this.parentNode); });
+			$span.html(data[i].entry);
+			$li.append($span);
+			$innerul.append($li);
+		}else{ //file
+			var $li = $('<li />');
+			var ext = "ext-"+data[i].entry.substring(data[i].entry.lastIndexOf(".") + 1);
+			$li.addClass("pft-file "+ext.toLowerCase());
+			$li.mousedown(function(){ MoveLi(this); });
+			$li.mouseup(function(){ DropLi(this); });
+			var $a = $('<a />',{
+				'data-fullpath':data[i].fullpath	
+			});
+			$a.click(function(){ queue($(this).attr('data-fullpath')); });
+			$a.html(data[i].entry);
+			$li.append($a);
+			$innerul.append($li);
+		}
+	}
+	$ul.append($innerul);
+	$("#leftscrollbar").css({"height":($("#left").height()*($("#left").height()/$("#left>ul").height()))+"px" });
 }
 
 //function that is called right after the playlist is loaded

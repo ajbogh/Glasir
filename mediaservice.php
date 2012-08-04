@@ -18,7 +18,11 @@ if(!in_array($ext,$allowedExtensions)){
 	exit;
 }
 
-if(file_exists($track)){
+$exists = file_exists($track);
+$existsCP850 = file_exists(mb_convert_encoding($track, 'CP850', 'UTF-8'));
+
+if($exists || $existsCP850){
+	if($existsCP850 && !$exists) $track = mb_convert_encoding($track, 'CP850', 'UTF-8');
 	if(!$duration){
 
 		//load the information into the database

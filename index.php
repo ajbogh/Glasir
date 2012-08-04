@@ -59,7 +59,30 @@
 
 			var originalList = null;
 			$("#filter").keyup(function(event){
-				if(originalList == null){ originalList = $("#left").clone(); }
+				//DB Search
+				$.ajax({
+					url:"classes/DBFunctions.php",
+					data:{
+						action:"searchDB",
+						keyword:$("#filter").val()
+					},
+					type:"POST",
+					dataType:"json",
+					success:function(data){
+						if(originalList == null){ originalList = $("#left").clone(); }
+						console.log(data);
+						
+						if($("#filter").val() != ""){
+							//add li elements based on json
+						}else{
+							$("#left").html(originalList.html());
+						}
+					},
+					error:function(xhr){
+						console.log(xhr);
+					}
+				});
+				/*if(originalList == null){ originalList = $("#left").clone(); }
 				list = originalList.clone();
 
 				if($("#filter").val() != ""){
@@ -71,7 +94,7 @@
 					$("#left").html($(list));
 				}else{
 					$("#left").html(originalList.html());
-				}
+				}*/
 			});
 			
 			if($.browser.mozilla){ //TODO: Can we make Firefox process the song in the background?
@@ -111,6 +134,11 @@
 				        $(this).draggable("destroy");
 				}
 			});
+		});
+		
+		$("#searchLink").live("click",function(){
+			$("#searchPanel").height($(window).height());
+			$("#searchPanel").show("slide",{},500);
 		});
 
 		/*returns true if the children contain the filter*/
@@ -193,7 +221,7 @@
 		</div>
 		<div class="clear"></div>
 		<div id="account" class="login">
-			Welcome <?php echo $_SESSION['username']; ?>! || <a href="javascript:void(0);" onclick="doLogout()">Log Out</a>
+			Welcome <?php echo $_SESSION['username']; ?>! || <a href="#" id="searchLink">Search</a> || <a href="javascript:void(0);" onclick="doLogout()">Log Out</a>
 		</div>
 		<script type="text/javascript">
 			//load playlist onready
@@ -249,41 +277,15 @@
 		<div id="autoplay" class="playmode" onclick="cycleAutoplay();" title="Automatic Play"></div>
 	</div>
 
-
-
 	<div class="clear"></div>
-
-
 
 	<div id="actionMover"></div>
 	<div id="actionMover2"></div>
-	<div id="loginscreen">
-		<img src="images/removebutton.png" style="width:20px;float:right;" alt="Close" title="Close" onclick="$('#loginscreen').hide();" />
-		<div class="error"></div>
-		<form id="loginform" action="" method="post" onsubmit="return doLogin()">
-			<table>
-				<tr><td><label for="username">Username:</label></td><td><input id="username" name="username" type="text" /></td></tr>
-				<tr><td><label for="password">Password:</label></td><td><input id="password" name="password" type="password" /></td></tr>
-			</table>
-			<input type="submit" name="submit" value="Login" />
-			<input type="button" name="cancel" value="Cancel" onclick="$('#loginscreen').hide();$('#loginscreen div.error').hide();" />
-		</form>
-	</div>
-	<div id="registerscreen">
-		<img src="images/removebutton.png" style="width:20px;float:right;" alt="Close" title="Close" onclick="$('#registerscreen').hide();" />
-		<div class="error"></div>
-		<div class="success"></div>
-		<div>If you've registered before with the same email address, your username will be changed.</div>
-		<form id="registerform" action="" method="post" onsubmit="return doRegister();">
-			<table>
-				<tr><td><label for="username">Username:</label></td><td><input id="username" name="username" type="text" /></td></tr>
-				<tr><td><label for="email">Email:</label></td><td><input id="email" name="email" type="text" /></td></tr>
-				<tr><td><label for="password">Password:</label></td><td><input id="password" name="password" type="password" /></td></tr>
-				<tr><td><label for="confirmpassword">Confirm Password:</label></td><td><input id="confirmpassword" name="confirmpassword" type="password" /></td></tr>
-			</table>
-			<input type="submit" name="submit" value="Register" />
-			<input type="button" name="cancel" value="Cancel" onclick="$('#registerscreen').hide();$('#registerscreen div.error').hide();$('#registerscreen div.success').hide();" />
-		</form>
-	</div>
+	<?php
+		include("content/loginscreen.php");
+		include("content/registerscreen.php");
+		include("content/searchPanel.php");
+	?>
+	
 </body>
 </html> 
